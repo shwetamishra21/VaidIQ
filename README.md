@@ -4,6 +4,7 @@
 
 This project is an **AI-powered medical assistance platform** designed specifically for the Indian healthcare ecosystem. The system focuses on delivering **safe, explainable, and accessible healthcare guidance** using Artificial Intelligence (AI) and Retrieval-Augmented Generation (RAG).
 
+
 The platform is built with an **API-first architecture**. While the long-term vision includes a phone call–based, voice-first interaction model, **telephony integration is intentionally planned for a future phase**. This allows the core intelligence, safety mechanisms, and healthcare orchestration logic to be developed, tested, and validated independently.
 
 The system aims to act as a **first-level medical triage and healthcare coordination layer**, helping users decide the right next step: emergency care, hospital visit, consultation, or medicine discovery.
