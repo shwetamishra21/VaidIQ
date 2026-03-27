@@ -768,7 +768,6 @@ textarea.form-in{resize:vertical;min-height:72px;}
     <p><strong>Click to upload a document</strong><br>Supports PDF, JPG, PNG · Prescriptions, Lab reports, X-rays · Max 10 MB</p>
   </div>
   <input type="file" id="fileUploadInput" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleFileUpload(this)">
-  <!-- Upload form (shown after file selected) -->
   <div id="uploadForm" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;">
     <div class="card-hd"><h3>Document Details</h3></div>
     <div class="form-row">
@@ -1032,12 +1031,8 @@ textarea.form-in{resize:vertical;min-height:72px;}
 <div class="toast" id="toastEl"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════
-// CONFIG — change this if backend runs on a different port
-// ══════════════════════════════════════════════════════════
 const API = "http://localhost:4000/api";
 
-// ── State ──────────────────────────────────────────────────
 let TOKEN    = localStorage.getItem("vaidiq_token") || "";
 let USER     = JSON.parse(localStorage.getItem("vaidiq_user") || "null");
 let chatSessionId = null;
@@ -1048,7 +1043,6 @@ let hospFilter = "all", hospQuery = "";
 let allHospitals = [], allMedicines = [];
 let pendingFile = null;
 
-// ── Helpers ────────────────────────────────────────────────
 function api(path, opts = {}) {
   return fetch(API + path, {
     ...opts,
@@ -1065,7 +1059,6 @@ function toast(msg, type = "") {
   toastTmr = setTimeout(() => el.classList.remove("show"), 3200);
 }
 
-// ── Auth ────────────────────────────────────────────────────
 function switchAuth(tab) {
   document.querySelector(".auth-tab button:nth-child(1)").classList.toggle("active", tab === "login");
   document.querySelector(".auth-tab button:nth-child(2)").classList.toggle("active", tab === "register");
@@ -1080,30 +1073,44 @@ function showAuthErr(msg) {
   el.classList.add("show");
 }
 
+// ── FIXED: doLogin with try/catch ──────────────────────────────
 async function doLogin() {
-  const phone = document.getElementById("loginPhone").value.trim();
+  const phone    = document.getElementById("loginPhone").value.trim();
   const password = document.getElementById("loginPass").value;
   if (!phone || !password) return showAuthErr("Please enter your phone and password.");
-  const res = await fetch(API + "/auth/login", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ phone, password }),
-  }).then(r => r.json());
-  if (res.error) return showAuthErr(res.error);
-  onAuthSuccess(res);
+  try {
+    const r   = await fetch(API + "/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, password }),
+    });
+    const res = await r.json();
+    if (res.error) return showAuthErr(res.error);
+    onAuthSuccess(res);
+  } catch (err) {
+    showAuthErr("Cannot connect to server. Is the backend running on port 4000?");
+  }
 }
 
+// ── FIXED: doRegister with try/catch ──────────────────────────
 async function doRegister() {
   const fullName = document.getElementById("regName").value.trim();
   const phone    = document.getElementById("regPhone").value.trim();
   const password = document.getElementById("regPass").value;
   const city     = document.getElementById("regCity").value.trim();
   if (!fullName || !phone || !password) return showAuthErr("Full name, phone, and password are required.");
-  const res = await fetch(API + "/auth/register", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fullName, phone, password, city }),
-  }).then(r => r.json());
-  if (res.error) return showAuthErr(res.error);
-  onAuthSuccess(res);
+  try {
+    const r   = await fetch(API + "/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fullName, phone, password, city }),
+    });
+    const res = await r.json();
+    if (res.error) return showAuthErr(res.error);
+    onAuthSuccess(res);
+  } catch (err) {
+    showAuthErr("Cannot connect to server. Is the backend running on port 4000?");
+  }
 }
 
 function onAuthSuccess(res) {
@@ -1125,21 +1132,19 @@ function doLogout() {
   location.reload();
 }
 
-// ── Navigation ──────────────────────────────────────────────
 function showView(id) {
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
   document.getElementById("view-" + id).classList.add("active");
   const nl = document.getElementById("nl-" + id);
   if (nl) nl.classList.add("active");
-  if (id === "hospitals")   renderHosps(filterHosps());
-  if (id === "medicines")   renderMeds(filterMeds(""));
-  if (id === "healthlog")   loadLogs();
-  if (id === "records")     loadRecords();
+  if (id === "hospitals")    renderHosps(filterHosps());
+  if (id === "medicines")    renderMeds(filterMeds(""));
+  if (id === "healthlog")    loadLogs();
+  if (id === "records")      loadRecords();
   if (id === "appointments") loadAppointments();
 }
 
-// ── User Profile ─────────────────────────────────────────────
 async function loadUserProfile() {
   const user = await api("/users/me");
   if (user.error) return;
@@ -1154,7 +1159,6 @@ async function loadUserProfile() {
   document.getElementById("profAllergyDetail").textContent = user.allergies || "None recorded";
   document.getElementById("profEmgContact").textContent = user.emergencyContactName
     ? `${user.emergencyContactName} · ${user.emergencyContactPhone || ""}` : "Not set";
-  // Prefill edit fields
   if (user.heightCm) document.getElementById("editHeight").value = user.heightCm;
   if (user.weightKg) document.getElementById("editWeight").value = user.weightKg;
   if (user.bloodGroup) document.getElementById("editBlood").value = user.bloodGroup;
@@ -1182,7 +1186,6 @@ async function saveProfile() {
   loadUserProfile();
 }
 
-// ── Health Log ────────────────────────────────────────────────
 async function saveLog() {
   const sys = document.getElementById("logSys").value;
   const dia = document.getElementById("logDia").value;
@@ -1250,7 +1253,6 @@ async function clearLogs() {
   toast("All logs cleared.");
 }
 
-// ── Chat ───────────────────────────────────────────────────────
 async function doSend() {
   const el = document.getElementById("chatIn");
   const txt = el.value.trim();
@@ -1311,7 +1313,6 @@ function clearChat() {
   appendMsg("ai", "Chat cleared. How can I help you today?");
 }
 
-// ── Medicines ──────────────────────────────────────────────────
 async function loadMedicines() {
   const res = await api("/medicines");
   allMedicines = res.medicines || [];
@@ -1355,7 +1356,6 @@ function toggleAlts(id, btn) {
   else { p.style.display = "block"; arr.textContent = "↑"; }
 }
 
-// ── Hospitals ──────────────────────────────────────────────────
 async function loadHospitals() {
   const res = await api("/hospitals");
   allHospitals = res.hospitals || [];
@@ -1384,7 +1384,6 @@ function renderHosps(list) {
     </div>`).join("");
 }
 
-// ── Appointments ───────────────────────────────────────────────
 async function bookAppointment() {
   const doctorName = document.getElementById("apptDoctor").value.trim();
   const specialty = document.getElementById("apptSpecialty").value;
@@ -1392,10 +1391,8 @@ async function bookAppointment() {
   const activeSlot = document.querySelector(".tslot.active");
   const appointmentTime = activeSlot ? activeSlot.textContent.trim() : "14:00";
   const apptType = document.getElementById("typeInperson").classList.contains("active-sch") ? "inperson" : "video";
-
   if (!doctorName) return toast("Please enter the doctor's name", "error");
   if (!appointmentDate) return toast("Please select a date", "error");
-
   const res = await api("/appointments", {
     method: "POST",
     body: JSON.stringify({ doctorName, specialty, appointmentDate, appointmentTime, apptType, fee: 500 }),
@@ -1423,7 +1420,6 @@ async function loadAppointments() {
   }).join("");
 }
 
-// ── Ambulance ──────────────────────────────────────────────────
 async function bookAmbulance() {
   const pickup = document.getElementById("ambPickup").value.trim();
   const drop   = document.getElementById("ambDrop").value.trim();
@@ -1431,9 +1427,7 @@ async function bookAmbulance() {
   const condition = document.getElementById("ambCondition").value.trim();
   const ambulanceType = document.getElementById("ambType").value;
   const bookingType = document.getElementById("ambEmg").style.background.includes("red-pale") ? "emergency" : "scheduled";
-
   if (!pickup || !drop || !phone) return toast("Please fill in pickup, drop, and contact number", "error");
-
   const res = await api("/ambulance", {
     method: "POST",
     body: JSON.stringify({ bookingType, ambulanceType, pickupAddress: pickup, dropAddress: drop, contactPhone: phone, patientCondition: condition }),
@@ -1442,7 +1436,6 @@ async function bookAmbulance() {
   toast(`Ambulance booked! ETA: ${res.etaMinutes} minutes. For fastest response also call 108 directly.`, "success");
 }
 
-// ── Medical Records ────────────────────────────────────────────
 let pendingFileObj = null;
 
 function handleFileUpload(input) {
@@ -1462,7 +1455,6 @@ async function submitUpload() {
   const title = document.getElementById("uploadTitle").value.trim();
   const category = document.getElementById("uploadCat").value;
   if (!title) return toast("Please enter a title for this document", "error");
-
   const form = new FormData();
   form.append("file", pendingFileObj);
   form.append("category", category);
@@ -1471,13 +1463,11 @@ async function submitUpload() {
   form.append("hospitalName", document.getElementById("uploadHospital").value);
   form.append("recordDate", document.getElementById("uploadDate").value);
   form.append("notes", document.getElementById("uploadNotes").value);
-
   const res = await fetch(API + "/records/upload", {
     method: "POST",
     headers: { Authorization: `Bearer ${TOKEN}` },
     body: form,
   }).then(r => r.json());
-
   if (res.error) return toast("Upload failed: " + res.error, "error");
   toast("Document uploaded successfully!", "success");
   cancelUpload();
@@ -1525,15 +1515,13 @@ function renderRecords(records, activeCategory = null) {
 }
 
 function downloadRecord(id, filename) {
-  const link = document.createElement("a");
-  link.href = API + "/records/" + id + "/download?token=" + TOKEN;
-  link.download = filename;
-  // Use auth header approach via fetch
   fetch(API + "/records/" + id + "/download", { headers: { Authorization: "Bearer " + TOKEN } })
     .then(r => r.blob())
     .then(blob => {
       const url = URL.createObjectURL(blob);
-      link.href = url; link.click(); URL.revokeObjectURL(url);
+      const link = document.createElement("a");
+      link.href = url; link.download = filename; link.click();
+      URL.revokeObjectURL(url);
     });
 }
 
@@ -1544,7 +1532,6 @@ async function deleteRecord(id) {
   loadRecords();
 }
 
-// ── UI Helpers ─────────────────────────────────────────────────
 function selectSlot(el) { document.querySelectorAll(".tslot").forEach(t => t.classList.remove("active")); el.classList.add("active"); }
 function setApptType(type) {
   const ip = document.getElementById("typeInperson"), v = document.getElementById("typeVideo");
@@ -1563,16 +1550,13 @@ function toggleCheck(btn) {
   if (tag) { tag.className = "late-tag " + (done ? "lt-due" : "lt-done"); tag.textContent = done ? "Due now" : "✓ Taken"; }
 }
 
-// ── Init ──────────────────────────────────────────────────────
 async function loadInitialData() {
   await loadHospitals();
   await loadMedicines();
 }
 
-// Set default date for appointments
 document.getElementById("apptDate").value = new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 10);
 
-// Check if already logged in
 if (TOKEN && USER) {
   document.getElementById("authOverlay").style.display = "none";
   document.getElementById("hdrUser").textContent = USER.fullName;
