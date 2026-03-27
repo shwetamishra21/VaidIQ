@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VaidIQ — Your Health Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#111827;--ink-mid:#374151;--ink-muted:#6B7280;--ink-faint:#9CA3AF;
+  --border:#E5E7EB;--border-mid:#D1D5DB;--surface:#FFFFFF;--bg:#F9FAFB;
+  --teal:#0F766E;--teal-mid:#14B8A6;--teal-light:#CCFBF1;--teal-pale:#F0FDFA;
+  --teal-dark:#0D5954;--teal-glow:rgba(15,118,110,0.12);
+  --red:#B91C1C;--red-mid:#DC2626;--red-light:#FEE2E2;--red-pale:#FEF2F2;
+  --amber:#92400E;--amber-light:#FEF3C7;--green:#065F46;--green-light:#D1FAE5;
+  --green-mid:#10B981;--blue:#1D4ED8;--blue-light:#DBEAFE;
+  --violet:#5B21B6;--violet-light:#EDE9FE;
+  --sidebar-w:240px;--header-h:60px;--radius:10px;--radius-lg:16px;--radius-xl:22px;
+  --shadow-xs:0 1px 3px rgba(0,0,0,.05);--shadow-sm:0 2px 8px rgba(0,0,0,.07);--shadow:0 4px 20px rgba(0,0,0,.09);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;}
+button,input,select,textarea{font-family:'DM Sans',sans-serif;}
+input,select,textarea{color:var(--ink);}
+a{text-decoration:none;color:inherit;}
+.shell{display:grid;grid-template-columns:var(--sidebar-w) 1fr;grid-template-rows:var(--header-h) 1fr;min-height:100vh;}
+header{grid-column:1/-1;height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:200;}
+.brand{display:flex;align-items:center;gap:10px;width:var(--sidebar-w);flex-shrink:0;padding-right:8px;}
+.brand-mark{width:36px;height:36px;border-radius:9px;flex-shrink:0;background:linear-gradient(140deg,var(--teal-dark),var(--teal-mid));display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:1rem;color:#fff;}
+.brand-name{font-family:'Instrument Serif',serif;font-size:1.2rem;color:var(--ink);line-height:1;}
+.brand-name em{font-style:italic;color:var(--teal);}
+.brand-tag{font-size:.6rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint);margin-top:1px;}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.btn-ghost{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-size:.8rem;font-weight:600;color:var(--ink-mid);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-ghost:hover{background:var(--bg);border-color:var(--border-mid);}
+.btn-primary{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);background:var(--teal);color:#fff;border:none;font-size:.8rem;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap;}
+.btn-primary:hover{background:var(--teal-dark);}
+.btn-emg{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius);background:var(--red-mid);color:#fff;border:none;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.btn-emg:hover{background:var(--red);}
+aside{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:16px 8px;position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;}
+.nav-grp{margin-bottom:18px;}
+.nav-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-faint);padding:0 10px;margin-bottom:3px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:8px;cursor:pointer;font-size:.83rem;font-weight:500;color:var(--ink-mid);border:none;background:none;width:100%;text-align:left;transition:all .15s;}
+.nav-item:hover{background:var(--bg);color:var(--ink);}
+.nav-item.active{background:var(--teal-pale);color:var(--teal-dark);font-weight:700;}
+.nav-badge{margin-left:auto;background:var(--teal);color:#fff;font-size:.58rem;font-weight:800;padding:2px 6px;border-radius:100px;}
+.nav-badge.red{background:var(--red-mid);}
+.nav-divider{height:1px;background:var(--border);margin:2px 10px 16px;}
+.sidebar-emg{margin:auto 4px 0;background:linear-gradient(135deg,#7F1D1D,var(--red-mid));border-radius:var(--radius-lg);padding:14px;cursor:pointer;}
+.sidebar-emg h4{color:#fff;font-size:.82rem;font-weight:700;margin-bottom:2px;}
+.sidebar-emg p{color:rgba(255,255,255,.68);font-size:.7rem;line-height:1.4;}
+.emg-call{display:inline-block;margin-top:8px;background:#fff;color:var(--red);font-size:.72rem;font-weight:800;padding:4px 12px;border-radius:100px;}
+main{padding:26px 26px 40px;overflow-y:auto;height:calc(100vh - var(--header-h));}
+.view{display:none;}
+.view.active{display:block;animation:fadeUp .2s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.pg-hd{margin-bottom:22px;}
+.pg-hd h1{font-family:'Instrument Serif',serif;font-size:1.9rem;font-weight:400;color:var(--ink);letter-spacing:-.02em;line-height:1.2;}
+.pg-hd h1 em{font-style:italic;color:var(--teal);}
+.pg-hd p{font-size:.84rem;color:var(--ink-muted);margin-top:5px;line-height:1.5;}
+.pg-hd-row{display:flex;justify-content:space-between;align-items:flex-end;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;}
+.card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.card-hd h3{font-size:.88rem;font-weight:700;color:var(--ink);}
+.card-link{font-size:.76rem;font-weight:600;color:var(--teal);background:none;border:none;cursor:pointer;}
+.card-link:hover{text-decoration:underline;}
+
+/* Dashboard */
+.dash-hero{background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 70%,var(--teal-mid) 100%);border-radius:var(--radius-xl);padding:26px 30px;margin-bottom:20px;position:relative;overflow:hidden;}
+.dash-hero::before{content:'';position:absolute;right:-30px;top:-30px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06);}
+.hero-greeting{font-family:'Instrument Serif',serif;font-size:1.5rem;font-weight:400;color:#fff;margin-bottom:4px;}
+.hero-sub{font-size:.82rem;color:rgba(255,255,255,.72);margin-bottom:14px;line-height:1.5;}
+.hero-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.hero-chip{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:.74rem;font-weight:600;padding:6px 13px;border-radius:100px;cursor:pointer;transition:background .15s;}
+.hero-chip:hover{background:rgba(255,255,255,.24);}
+.dash-2col{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px;}
+.qa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.qa-card{border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:all .15s;background:var(--surface);}
+.qa-card:hover{border-color:var(--teal-mid);background:var(--teal-pale);transform:translateY(-1px);}
+.qa-icon{font-size:1.3rem;margin-bottom:7px;}
+.qa-card h4{font-size:.8rem;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.qa-card p{font-size:.69rem;color:var(--ink-muted);line-height:1.35;}
+.act-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.act-item:last-child{border:none;}
+.act-dot{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.act-info{flex:1;}
+.act-info h5{font-size:.8rem;font-weight:600;color:var(--ink);}
+.act-info p{font-size:.69rem;color:var(--ink-muted);margin-top:1px;}
+.act-time{font-size:.67rem;color:var(--ink-faint);white-space:nowrap;}
+.tips-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.tip{background:var(--teal-pale);border:1px solid var(--teal-light);border-radius:var(--radius);padding:14px;}
+.tip-lbl{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);margin-bottom:3px;}
+.tip p{font-size:.76rem;color:var(--ink-mid);line-height:1.55;}
+
+/* Auth overlay */
+.auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px);}
+.auth-box{background:var(--surface);border-radius:var(--radius-xl);padding:36px;width:100%;max-width:400px;box-shadow:var(--shadow);}
+.auth-box h2{font-family:'Instrument Serif',serif;font-size:1.6rem;margin-bottom:5px;}
+.auth-box p{font-size:.8rem;color:var(--ink-muted);margin-bottom:22px;}
+.auth-tab{display:flex;gap:0;margin-bottom:20px;background:var(--bg);border-radius:var(--radius);padding:3px;}
+.auth-tab button{flex:1;padding:8px;border:none;background:none;font-size:.82rem;font-weight:600;cursor:pointer;border-radius:8px;color:var(--ink-muted);transition:all .15s;}
+.auth-tab button.active{background:var(--surface);color:var(--teal);box-shadow:var(--shadow-xs);}
+.auth-field{display:flex;flex-direction:column;gap:5px;margin-bottom:13px;}
+.auth-field label{font-size:.75rem;font-weight:700;color:var(--ink-mid);}
+.auth-field input{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 13px;font-size:.875rem;outline:none;transition:border-color .2s;}
+.auth-field input:focus{border-color:var(--teal-mid);background:var(--surface);}
+.auth-submit{width:100%;padding:11px;background:var(--teal);color:#fff;border:none;border-radius:var(--radius);font-size:.875rem;font-weight:700;cursor:pointer;margin-top:4px;transition:background .15s;}
+.auth-submit:hover{background:var(--teal-dark);}
+.auth-err{background:var(--red-pale);color:var(--red);font-size:.77rem;padding:8px 12px;border-radius:8px;margin-bottom:10px;display:none;}
+.auth-err.show{display:block;}
+
+/* Health Log */
+.log-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:18px;}
+.log-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:16px;}
+.log-field{display:flex;flex-direction:column;gap:6px;}
+.log-lbl{font-size:.74rem;font-weight:700;color:var(--ink-mid);}
+.log-lbl span{font-size:.68rem;font-weight:400;color:var(--ink-faint);}
+.log-in{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:.9rem;font-weight:700;color:var(--ink);outline:none;transition:border-color .2s;width:100%;}
+.log-in:focus{border-color:var(--teal-mid);background:var(--surface);}
+.log-in::placeholder{font-weight:400;color:var(--ink-faint);}
+.log-save{background:var(--teal);color:#fff;border:none;border-radius:var(--radius);padding:10px 24px;font-size:.83rem;font-weight:700;cursor:pointer;transition:background .15s;}
+.log-save:hover{background:var(--teal-dark);}
+.log-note{font-size:.74rem;color:var(--ink-muted);margin-top:12px;padding:10px 14px;background:var(--amber-light);border:1px solid #FCD34D;border-radius:var(--radius);line-height:1.5;}
+.log-history{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;}
+.log-empty{text-align:center;padding:32px;color:var(--ink-muted);}
+.log-empty-icon{font-size:2.2rem;margin-bottom:8px;}
+.log-empty p{font-size:.82rem;}
+.log-entry{display:flex;align-items:flex-start;gap:14px;padding:13px 0;border-bottom:1px solid var(--border);}
+.log-entry:last-child{border:none;}
+.log-entry-date{background:var(--teal-pale);border-radius:9px;padding:8px 12px;text-align:center;flex-shrink:0;min-width:52px;}
+.log-entry-date .ld{font-size:1.2rem;font-weight:800;color:var(--teal-dark);line-height:1;}
+.log-entry-date .lm{font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--teal);}
+.log-entry-body{flex:1;}
+.log-entry-body h5{font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.log-entry-vals{display:flex;flex-wrap:wrap;gap:6px;}
+.log-val-chip{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:.72rem;}
+.log-val-chip strong{color:var(--ink);}
+.log-val-chip span{color:var(--ink-muted);}
+.log-del{background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:.8rem;padding:4px;border-radius:5px;transition:color .15s;}
+.log-del:hover{color:var(--red-mid);}
+
+/* Chat */
+.chat-layout{display:grid;grid-template-columns:1fr 278px;gap:16px;height:calc(100vh - var(--header-h) - 110px);}
+.chat-main{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);display:flex;flex-direction:column;overflow:hidden;}
+.chat-bar{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
+.chat-av{width:38px;height:38px;border-radius:9px;background:linear-gradient(140deg,var(--teal-dark),var(--teal-mid));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.chat-meta h3{font-size:.86rem;font-weight:700;color:var(--ink);}
+.chat-meta p{font-size:.69rem;color:var(--teal);font-weight:600;display:flex;align-items:center;gap:4px;}
+.live-dot{width:5px;height:5px;border-radius:50%;background:#22C55E;display:inline-block;animation:livepulse 2s infinite;}
+@keyframes livepulse{0%,100%{opacity:1}50%{opacity:.3}}
+.disc{padding:7px 16px;background:#FFFBEB;border-bottom:1px solid #FDE68A;font-size:.7rem;color:#92400E;font-weight:500;}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.msg-row{display:flex;gap:9px;}
+.msg-row.user{flex-direction:row-reverse;}
+.msg-av-sm{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.msg-row.ai .msg-av-sm{background:var(--teal-light);}
+.msg-row.user .msg-av-sm{background:#EDE9FE;}
+.msg-body{max-width:75%;}
+.bubble{padding:10px 14px;border-radius:12px;font-size:.835rem;line-height:1.65;box-shadow:var(--shadow-xs);}
+.msg-row.ai .bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:3px;}
+.msg-row.user .bubble{background:linear-gradient(140deg,var(--teal-dark),var(--teal-mid));color:#fff;border-bottom-right-radius:3px;}
+.bubble.emergency{border-color:#FCA5A5;background:var(--red-pale);}
+.msg-time{font-size:.62rem;color:var(--ink-faint);margin-top:3px;padding:0 2px;}
+.msg-row.user .msg-time{text-align:right;}
+.qr-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px;}
+.qr-chip{padding:5px 12px;border-radius:100px;font-size:.73rem;font-weight:600;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;color:var(--ink-mid);transition:all .15s;}
+.qr-chip:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-pale);}
+.typing{display:flex;gap:4px;align-items:center;padding:11px 14px;}
+.td{width:5px;height:5px;border-radius:50%;background:var(--ink-faint);animation:tda 1.2s infinite;}
+.td:nth-child(2){animation-delay:.18s;}.td:nth-child(3){animation-delay:.36s;}
+@keyframes tda{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.chat-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;}
+.chat-in{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:.835rem;color:var(--ink);resize:none;min-height:42px;max-height:120px;outline:none;line-height:1.5;transition:border-color .2s;}
+.chat-in:focus{border-color:var(--teal-mid);background:var(--surface);}
+.chat-in::placeholder{color:var(--ink-faint);}
+.send-btn{width:42px;height:42px;border-radius:9px;border:none;flex-shrink:0;background:linear-gradient(140deg,var(--teal-dark),var(--teal-mid));color:#fff;font-size:15px;cursor:pointer;transition:opacity .15s;display:flex;align-items:center;justify-content:center;}
+.send-btn:hover{opacity:.88;}
+.send-btn:disabled{opacity:.35;cursor:not-allowed;}
+.chat-right{display:flex;flex-direction:column;gap:12px;}
+.cs-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;}
+.cs-card h4{font-size:.81rem;font-weight:700;margin-bottom:10px;color:var(--ink);}
+.sev-list{display:flex;flex-direction:column;gap:6px;}
+.sev-btn{width:100%;padding:8px 11px;border-radius:7px;border:1.5px solid transparent;font-size:.76rem;font-weight:700;cursor:pointer;text-align:left;transition:all .15s;}
+.sev-btn.mild{background:#F0FDF4;border-color:#86EFAC;color:var(--green);}
+.sev-btn.mod{background:var(--amber-light);border-color:#FCD34D;color:var(--amber);}
+.sev-btn.sev{background:var(--red-pale);border-color:#FCA5A5;color:var(--red);}
+.sev-btn:hover{transform:translateX(3px);}
+.emg-panel{background:var(--red-pale);border:1px solid #FECACA;border-radius:var(--radius-lg);padding:14px;}
+.emg-panel h4{color:var(--red);font-size:.81rem;font-weight:700;margin-bottom:6px;}
+.emg-panel p{font-size:.73rem;color:#7F1D1D;line-height:1.65;}
+
+/* Medicines */
+.med-bar{display:flex;gap:10px;margin-bottom:14px;align-items:center;}
+.med-in{flex:1;display:flex;align-items:center;gap:9px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:9px 14px;transition:border-color .2s;}
+.med-in:focus-within{border-color:var(--teal-mid);}
+.med-in input{background:transparent;border:none;outline:none;font-size:.845rem;color:var(--ink);width:100%;}
+.med-in input::placeholder{color:var(--ink-faint);}
+.btn-srch{background:var(--teal);color:#fff;border:none;border-radius:var(--radius);padding:9px 18px;font-size:.82rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.btn-srch:hover{background:var(--teal-dark);}
+.filter-strip{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.ftag{padding:5px 13px;border-radius:100px;font-size:.75rem;font-weight:600;border:1.5px solid var(--border);cursor:pointer;transition:all .15s;color:var(--ink-mid);background:var(--surface);}
+.ftag.active{background:var(--teal-pale);border-color:var(--teal-mid);color:var(--teal-dark);}
+.ftag:hover:not(.active){border-color:var(--border-mid);}
+.med-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:13px;}
+.med-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;transition:box-shadow .15s,transform .15s;}
+.med-card:hover{box-shadow:var(--shadow);transform:translateY(-2px);}
+.med-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.med-name{font-size:.93rem;font-weight:800;color:var(--ink);}
+.med-brand{font-size:.71rem;color:var(--ink-muted);margin-top:2px;}
+.price-tag{background:var(--teal-pale);color:var(--teal-dark);font-size:.88rem;font-weight:800;padding:4px 10px;border-radius:7px;white-space:nowrap;}
+.med-comp{font-size:.73rem;color:var(--ink-mid);margin-bottom:9px;}
+.med-comp strong{color:var(--ink);}
+.mtag-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:11px;}
+.mtag{padding:2px 7px;border-radius:5px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.mtag.generic{background:var(--blue-light);color:var(--blue);}
+.mtag.ja{background:var(--teal-pale);color:var(--teal-dark);border:1px solid var(--teal-light);}
+.mtag.rx{background:var(--red-pale);color:var(--red);}
+.mtag.otc{background:var(--amber-light);color:var(--amber);}
+.alts-btn{width:100%;text-align:left;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 11px;font-size:.75rem;font-weight:700;color:var(--teal);cursor:pointer;transition:background .15s;display:flex;justify-content:space-between;}
+.alts-btn:hover{background:var(--teal-pale);}
+.alts-panel{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:11px;margin-top:6px;display:none;}
+.alts-hd{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);margin-bottom:7px;}
+.alt-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);}
+.alt-row:last-child{border:none;padding-bottom:0;}
+.alt-nm{font-size:.78rem;font-weight:600;color:var(--ink);}
+.alt-r{display:flex;align-items:center;gap:6px;}
+.alt-p{font-size:.83rem;font-weight:800;color:var(--teal);}
+.save-tag{font-size:.62rem;font-weight:800;background:var(--teal-pale);color:var(--teal-dark);padding:2px 6px;border-radius:4px;}
+
+/* Med schedule */
+.sched-list{display:flex;flex-direction:column;gap:14px;}
+.sched-slot{display:flex;gap:14px;}
+.slot-time{width:58px;padding-top:2px;flex-shrink:0;}
+.slot-time .st{font-size:.8rem;font-weight:800;color:var(--ink);}
+.slot-time .ss{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-faint);}
+.slot-meds{flex:1;display:flex;flex-direction:column;gap:8px;}
+.med-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;display:flex;align-items:center;gap:11px;}
+.med-pill-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.med-item-info{flex:1;}
+.med-item-info h5{font-size:.83rem;font-weight:700;color:var(--ink);}
+.med-item-info p{font-size:.68rem;color:var(--ink-muted);margin-top:1px;}
+.med-item-time{font-size:.68rem;font-weight:700;color:var(--teal);margin-top:3px;}
+.check-box{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .2s;flex-shrink:0;}
+.check-box.done{background:var(--green-mid);border-color:var(--green-mid);color:#fff;}
+.check-box:hover:not(.done){border-color:var(--teal);background:var(--teal-pale);}
+.late-tag{font-size:.62rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:4px;}
+.lt-done{background:var(--green-light);color:var(--green);}
+.lt-due{background:var(--amber-light);color:var(--amber);}
+.lt-upcoming{background:var(--violet-light);color:var(--violet);}
+
+/* Hospitals */
+.hosp-toolbar{display:flex;gap:10px;margin-bottom:14px;align-items:center;flex-wrap:wrap;}
+.loc-pill{display:flex;align-items:center;gap:6px;padding:8px 13px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap;}
+.loc-pill:hover{border-color:var(--teal);}
+.hosp-search{flex:1;display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 13px;}
+.hosp-search:focus-within{border-color:var(--teal-mid);}
+.hosp-search input{background:transparent;border:none;outline:none;font-size:.82rem;width:100%;}
+.hosp-layout{display:grid;grid-template-columns:1fr 290px;gap:16px;}
+.hosp-list{display:flex;flex-direction:column;gap:11px;}
+.hosp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;transition:box-shadow .15s,transform .15s;cursor:pointer;}
+.hosp-card:hover{box-shadow:var(--shadow);transform:translateY(-2px);}
+.hosp-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.hosp-nm{font-size:.95rem;font-weight:800;color:var(--ink);}
+.hosp-dist{font-size:.71rem;color:var(--ink-muted);margin-top:2px;}
+.htype{padding:3px 10px;border-radius:6px;font-size:.64rem;font-weight:800;text-transform:uppercase;}
+.htype.govt{background:var(--blue-light);color:var(--blue);}
+.htype.private{background:var(--amber-light);color:var(--amber);}
+.htype.clinic{background:var(--teal-pale);color:var(--teal-dark);}
+.spec-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:11px;}
+.spec{background:var(--bg);border:1px solid var(--border);color:var(--ink-mid);padding:2px 8px;border-radius:5px;font-size:.67rem;font-weight:500;}
+.spec.emg{background:var(--red-pale);border-color:#FECACA;color:var(--red);font-weight:700;}
+.hosp-foot{display:flex;align-items:center;justify-content:space-between;}
+.rating{display:flex;align-items:center;gap:3px;font-size:.8rem;font-weight:700;color:var(--ink);}
+.star{color:#F59E0B;}
+.hosp-btns{display:flex;gap:6px;}
+.hbtn{padding:6px 13px;border-radius:7px;font-size:.74rem;font-weight:700;cursor:pointer;border:none;transition:opacity .15s;}
+.hbtn.out{background:var(--teal-pale);color:var(--teal-dark);border:1px solid var(--teal-light);}
+.hbtn.fill{background:var(--teal);color:#fff;}
+.hbtn:hover{opacity:.82;}
+.map-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;position:sticky;top:20px;}
+.map-area{height:200px;background:#E5F5F5;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;}
+.map-area p{font-size:.78rem;font-weight:600;color:var(--teal);text-align:center;padding:0 20px;}
+.map-foot{padding:13px 14px;}
+.map-foot h4{font-size:.82rem;font-weight:700;margin-bottom:2px;}
+.map-foot p{font-size:.71rem;color:var(--ink-muted);}
+.emg-box{background:var(--red-pale);border:1px solid #FECACA;border-radius:var(--radius-lg);padding:14px;margin-top:11px;}
+.emg-box h4{color:var(--red);font-size:.82rem;font-weight:700;margin-bottom:4px;}
+.emg-box p{font-size:.73rem;color:#7F1D1D;line-height:1.45;}
+.call-btn{margin-top:10px;width:100%;background:var(--red-mid);color:#fff;border:none;border-radius:7px;padding:8px;font-weight:700;font-size:.77rem;cursor:pointer;}
+.call-btn:hover{background:var(--red);}
+
+/* Appointments */
+.appt-grid{display:grid;grid-template-columns:1fr 300px;gap:16px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-lbl{font-size:.75rem;font-weight:700;color:var(--ink-mid);}
+.form-in{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:9px 13px;font-size:.83rem;color:var(--ink);outline:none;transition:border-color .2s;width:100%;}
+.form-in:focus{border-color:var(--teal-mid);background:var(--surface);}
+.form-in::placeholder{color:var(--ink-faint);}
+textarea.form-in{resize:vertical;min-height:72px;}
+.time-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.tslot{padding:8px 6px;border-radius:7px;border:1.5px solid var(--border);background:var(--surface);font-size:.77rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;color:var(--ink-mid);}
+.tslot:hover{border-color:var(--teal-mid);color:var(--teal);}
+.tslot.active{background:var(--teal-pale);border-color:var(--teal-mid);color:var(--teal-dark);}
+.type-toggle{display:flex;gap:7px;margin-bottom:14px;}
+.type-btn{flex:1;padding:9px;border-radius:var(--radius);font-size:.78rem;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--ink-mid);transition:all .15s;}
+.type-btn.active-sch{background:var(--blue-light);border-color:#BFDBFE;color:var(--blue);}
+.appt-summary{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-top:4px;}
+.fee-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;}
+.fee-row span:first-child{font-size:.78rem;color:var(--ink-muted);}
+.fee-row span:last-child{font-size:.78rem;font-weight:700;color:var(--ink);}
+.fee-divider{height:1px;background:var(--border);margin:7px 0;}
+.fee-total{display:flex;justify-content:space-between;align-items:center;}
+.fee-total span:first-child{font-size:.83rem;font-weight:700;color:var(--ink);}
+.fee-total span:last-child{font-size:1rem;font-weight:800;color:var(--teal);}
+.upcoming-appts{display:flex;flex-direction:column;gap:9px;}
+.appt-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;display:flex;gap:12px;align-items:center;}
+.appt-date-col{background:var(--teal-pale);border-radius:8px;padding:9px 12px;text-align:center;flex-shrink:0;}
+.appt-date-col .d{font-family:'Instrument Serif',serif;font-size:1.4rem;color:var(--teal-dark);line-height:1;}
+.appt-date-col .m{font-size:.62rem;font-weight:700;text-transform:uppercase;color:var(--teal);}
+.appt-info{flex:1;}
+.appt-info h5{font-size:.85rem;font-weight:700;color:var(--ink);}
+.appt-info p{font-size:.72rem;color:var(--ink-muted);margin-top:2px;}
+.appt-tag{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:4px;}
+.tag-inperson{background:var(--blue-light);color:var(--blue);}
+.tag-video{background:var(--violet-light);color:var(--violet);}
+.notif-info{background:#F5F3FF;border:1px solid #DDD6FE;border-radius:var(--radius-lg);padding:13px;display:flex;align-items:center;gap:11px;margin-top:2px;}
+.notif-info p{font-size:.75rem;color:#5B21B6;line-height:1.45;}
+
+/* Ambulance */
+.amb-hero{background:linear-gradient(135deg,#7F1D1D,var(--red-mid));border-radius:var(--radius-xl);padding:26px;margin-bottom:18px;}
+.amb-hero h2{font-family:'Instrument Serif',serif;font-size:1.5rem;font-weight:400;color:#fff;margin-bottom:4px;}
+.amb-hero p{font-size:.81rem;color:rgba(255,255,255,.72);margin-bottom:18px;line-height:1.5;}
+.amb-ctas{display:flex;gap:9px;flex-wrap:wrap;}
+.amb-cta{display:flex;align-items:center;gap:7px;padding:11px 20px;border-radius:var(--radius);font-size:.83rem;font-weight:800;cursor:pointer;border:none;transition:all .15s;}
+.amb-cta.primary{background:#fff;color:var(--red);}
+.amb-cta.secondary{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.22);}
+.amb-cta:hover{opacity:.88;}
+.amb-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:14px;}
+
+/* Emergency */
+.emg-card-main{background:linear-gradient(135deg,#7F1D1D,var(--red-mid));border-radius:var(--radius-xl);padding:26px;margin-bottom:16px;}
+.emg-card-main h2{font-family:'Instrument Serif',serif;font-size:1.5rem;font-weight:400;color:#fff;margin-bottom:4px;}
+.emg-card-main p{font-size:.8rem;color:rgba(255,255,255,.72);margin-bottom:18px;line-height:1.5;}
+.emg-btns{display:flex;gap:9px;flex-wrap:wrap;}
+.emg-btn{display:flex;align-items:center;gap:7px;padding:11px 20px;border-radius:var(--radius);font-size:.85rem;font-weight:800;cursor:pointer;border:none;transition:all .15s;}
+.emg-btn.white{background:#fff;color:var(--red);}
+.emg-btn.dark{background:rgba(127,29,29,.5);color:#fff;border:1.5px solid rgba(255,255,255,.2);}
+.emg-btn:hover{opacity:.88;}
+.contacts-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;}
+.contacts-list{display:flex;flex-direction:column;gap:8px;}
+.contact-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);}
+.contact-info h5{font-size:.82rem;font-weight:700;color:var(--ink);}
+.contact-info p{font-size:.7rem;color:var(--ink-muted);}
+.call-chip{display:flex;align-items:center;gap:6px;padding:6px 13px;background:var(--teal);color:#fff;border:none;border-radius:7px;font-size:.75rem;font-weight:700;cursor:pointer;}
+.call-chip:hover{background:var(--teal-dark);}
+.fast-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px;}
+.fast-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:13px;text-align:center;}
+.fast-letter{font-family:'Instrument Serif',serif;font-size:1.6rem;font-weight:400;color:var(--red);line-height:1;}
+.fast-word{font-size:.71rem;font-weight:700;color:var(--ink);margin:3px 0 2px;}
+.fast-desc{font-size:.65rem;color:var(--ink-muted);line-height:1.35;}
+
+/* Records */
+.records-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:20px;}
+.rec-cat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:all .15s;}
+.rec-cat:hover{box-shadow:var(--shadow);transform:translateY(-2px);}
+.rc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:10px;}
+.rc-name{font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:1px;}
+.rc-count{font-size:.72rem;color:var(--ink-muted);}
+.rec-docs{display:flex;flex-direction:column;gap:9px;}
+.rec-doc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:all .15s;}
+.rec-doc:hover{box-shadow:var(--shadow-sm);border-color:var(--border-mid);}
+.doc-icon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.doc-info{flex:1;}
+.doc-info h5{font-size:.84rem;font-weight:700;color:var(--ink);}
+.doc-info p{font-size:.71rem;color:var(--ink-muted);margin-top:1px;}
+.doc-dr{font-size:.68rem;color:var(--teal);font-weight:600;margin-top:2px;}
+.doc-arrow{color:var(--ink-faint);}
+.upload-area{border:2px dashed var(--border-mid);border-radius:var(--radius-lg);padding:32px;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:16px;}
+.upload-area:hover{border-color:var(--teal-mid);background:var(--teal-pale);}
+.upload-area p{font-size:.82rem;color:var(--ink-muted);margin-top:7px;}
+.upload-area .up-icon{font-size:2rem;}
+#fileUploadInput{display:none;}
+
+/* Profile */
+.profile-layout{display:grid;grid-template-columns:260px 1fr;gap:20px;}
+.prof-left{display:flex;flex-direction:column;gap:13px;}
+.prof-hero{background:linear-gradient(140deg,var(--teal-dark),var(--teal-mid));border-radius:var(--radius-xl);overflow:hidden;}
+.prof-hero-inner{padding:26px;text-align:center;}
+.prof-av{width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.28);margin:0 auto 11px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;}
+.prof-name{font-family:'Instrument Serif',serif;font-size:1.15rem;color:#fff;margin-bottom:2px;}
+.prof-sub{font-size:.73rem;color:rgba(255,255,255,.65);}
+.prof-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(255,255,255,.1);}
+.ps{background:rgba(0,0,0,.1);padding:12px;text-align:center;}
+.ps-val{font-size:1rem;font-weight:800;color:#fff;}
+.ps-key{font-size:.62rem;color:rgba(255,255,255,.58);margin-top:1px;}
+.prof-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;}
+.psec-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-faint);margin-bottom:9px;}
+.prow{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid var(--border);border-radius:7px;cursor:pointer;transition:background .12s;}
+.prow:last-child{border-bottom:none;}
+.prow:hover{background:var(--bg);}
+.prow-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.prow-info{flex:1;}
+.prow-info h5{font-size:.8rem;font-weight:700;color:var(--ink);}
+.prow-info p{font-size:.68rem;color:var(--ink-muted);}
+.prow-val{font-size:.76rem;font-weight:600;color:var(--ink-mid);}
+.prow-arr{color:var(--ink-faint);font-size:.9rem;}
+.toggle{width:38px;height:21px;border-radius:11px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--teal);}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle.on::after{transform:translateX(17px);}
+
+/* Toast */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--ink);color:#fff;padding:10px 16px;border-radius:9px;font-size:.79rem;font-weight:600;opacity:0;transform:translateY(7px);transition:all .25s;z-index:9999;pointer-events:none;max-width:300px;box-shadow:var(--shadow);}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{background:#065F46;}
+.toast.error{background:#B91C1C;}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#D1D5DB;border-radius:4px;}
+
+@media(max-width:1200px){
+  .dash-2col,.appt-grid,.hosp-layout,.profile-layout{grid-template-columns:1fr;}
+  .chat-layout{grid-template-columns:1fr;}
+  .chat-right{display:none;}
+}
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr;}
+  aside{display:none;}
+  .records-cats{grid-template-columns:repeat(2,1fr);}
+  .tips-grid{grid-template-columns:1fr;}
+  main{padding:14px;}
+}
+@media(max-width:600px){
+  .qa-grid{grid-template-columns:1fr 1fr;}
+  .med-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .log-grid{grid-template-columns:1fr 1fr;}
+  .fast-grid{grid-template-columns:1fr 1fr;}
+  .records-cats{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Auth Overlay ─────────────────────────────────────────────── -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-box">
+    <h2>VaidIQ</h2>
+    <p>Your AI-powered health companion</p>
+    <div class="auth-tab">
+      <button class="active" onclick="switchAuth('login')">Login</button>
+      <button onclick="switchAuth('register')">Register</button>
+    </div>
+    <div class="auth-err" id="authErr"></div>
+    <!-- Login form -->
+    <div id="loginForm">
+      <div class="auth-field"><label>Phone Number</label><input type="tel" id="loginPhone" placeholder="+91 98765 43210"></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="loginPass" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="auth-submit" onclick="doLogin()">Login →</button>
+    </div>
+    <!-- Register form -->
+    <div id="registerForm" style="display:none">
+      <div class="auth-field"><label>Full Name</label><input type="text" id="regName" placeholder="Rohan Sharma"></div>
+      <div class="auth-field"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="+91 98765 43210"></div>
+      <div class="auth-field"><label>Password <span style="font-weight:400;color:var(--ink-faint)">(min 8 chars)</span></label><input type="password" id="regPass" placeholder="Create a password"></div>
+      <div class="auth-field"><label>City <span style="font-weight:400;color:var(--ink-faint)">(optional)</span></label><input type="text" id="regCity" placeholder="New Delhi" onkeydown="if(event.key==='Enter')doRegister()"></div>
+      <button class="auth-submit" onclick="doRegister()">Create Account →</button>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+<!-- HEADER -->
+<header>
+  <div class="brand">
+    <div class="brand-mark">V</div>
+    <div>
+      <div class="brand-name">Vaid<em>IQ</em></div>
+      <div class="brand-tag">Health Companion</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <span id="hdrUser" style="font-size:.8rem;font-weight:600;color:var(--ink-muted);"></span>
+    <button class="btn-ghost" onclick="showView('profile')">My Profile</button>
+    <button class="btn-primary" onclick="showView('symptoms')">Ask AI Health Assistant</button>
+    <button class="btn-emg" onclick="toast('For emergencies call 112 immediately','error')">🚨 Emergency 112</button>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside>
+  <div class="nav-grp">
+    <div class="nav-lbl">Overview</div>
+    <button class="nav-item active" id="nl-dashboard" onclick="showView('dashboard')">🏠 Dashboard</button>
+    <button class="nav-item" id="nl-healthlog" onclick="showView('healthlog')">📋 Health Log</button>
+  </div>
+  <div class="nav-grp">
+    <div class="nav-lbl">Health Tools</div>
+    <button class="nav-item" id="nl-symptoms" onclick="showView('symptoms')">💬 Symptom Checker <span class="nav-badge">AI</span></button>
+    <button class="nav-item" id="nl-medicines" onclick="showView('medicines')">💊 Medicines</button>
+    <button class="nav-item" id="nl-records" onclick="showView('records')">📁 Medical Records</button>
+  </div>
+  <div class="nav-grp">
+    <div class="nav-lbl">Services</div>
+    <button class="nav-item" id="nl-hospitals" onclick="showView('hospitals')">🏥 Find Hospitals</button>
+    <button class="nav-item" id="nl-appointments" onclick="showView('appointments')">📅 Appointments</button>
+    <button class="nav-item" id="nl-ambulance" onclick="showView('ambulance')">🚑 Book Ambulance <span class="nav-badge red">FAST</span></button>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-grp">
+    <div class="nav-lbl">Account</div>
+    <button class="nav-item" id="nl-emergency" onclick="showView('emergency')">🆘 Emergency Info</button>
+    <button class="nav-item" id="nl-profile" onclick="showView('profile')">👤 My Profile</button>
+    <button class="nav-item" onclick="doLogout()">🚪 Log Out</button>
+  </div>
+  <div class="sidebar-emg" onclick="toast('For emergencies call 112 immediately','error')">
+    <h4>Emergency?</h4>
+    <p>Life-threatening? Call immediately.</p>
+    <span class="emg-call">Call 112</span>
+  </div>
+</aside>
+
+<main>
+
+<!-- ▸ DASHBOARD -->
+<div class="view active" id="view-dashboard">
+  <div class="pg-hd">
+    <h1>Welcome back, <em id="dashName">...</em></h1>
+    <p>Your health companion — here to guide, not diagnose. Always consult a doctor for medical decisions.</p>
+  </div>
+  <div class="dash-hero" style="margin-bottom:18px;">
+    <div class="hero-greeting">How can we help you today?</div>
+    <div class="hero-sub">Describe symptoms to our AI · Find hospitals · Search affordable medicines · Book appointments</div>
+    <div class="hero-chips">
+      <div class="hero-chip" onclick="showView('symptoms')">💬 Check symptoms with AI</div>
+      <div class="hero-chip" onclick="showView('medicines')">💊 Find generic medicines</div>
+      <div class="hero-chip" onclick="showView('hospitals')">🏥 Hospitals near me</div>
+      <div class="hero-chip" onclick="showView('ambulance')">🚑 Book ambulance</div>
+    </div>
+  </div>
+  <div class="dash-2col">
+    <div class="card">
+      <div class="card-hd"><h3>Quick Actions</h3></div>
+      <div class="qa-grid">
+        <div class="qa-card" onclick="showView('symptoms')"><div class="qa-icon">💬</div><h4>Ask AI About Symptoms</h4><p>Describe how you feel — get guidance on next steps</p></div>
+        <div class="qa-card" onclick="showView('medicines')"><div class="qa-icon">💊</div><h4>Search Medicines</h4><p>Find generics & Jan Aushadhi to save money</p></div>
+        <div class="qa-card" onclick="showView('hospitals')"><div class="qa-icon">🏥</div><h4>Find a Hospital</h4><p>Govt & private hospitals near your location</p></div>
+        <div class="qa-card" onclick="showView('appointments')"><div class="qa-icon">📅</div><h4>Book Appointment</h4><p>Specialist consultation — in-person or video</p></div>
+        <div class="qa-card" onclick="showView('healthlog')"><div class="qa-icon">📋</div><h4>Log Health Readings</h4><p>Record BP, sugar, weight from your devices</p></div>
+        <div class="qa-card" onclick="showView('ambulance')"><div class="qa-icon">🚑</div><h4>Book Ambulance</h4><p>Emergency dispatch · Free 108 service</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h3>Health Tips</h3></div>
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div class="act-item"><div class="act-dot" style="background:var(--blue-light)">💧</div><div class="act-info"><h5>Stay Hydrated</h5><p>Drink at least 8 glasses of water daily</p></div></div>
+        <div class="act-item"><div class="act-dot" style="background:var(--green-light)">🥦</div><div class="act-info"><h5>Eat Seasonal Vegetables</h5><p>Dal, sabzi & fruits support your immunity</p></div></div>
+        <div class="act-item"><div class="act-dot" style="background:var(--amber-light)">🚶</div><div class="act-info"><h5>Walk 30 Minutes Daily</h5><p>Reduces cardiovascular risk significantly</p></div></div>
+        <div class="act-item"><div class="act-dot" style="background:var(--violet-light)">😴</div><div class="act-info"><h5>Sleep 7–8 Hours</h5><p>Essential for immune and mental health</p></div></div>
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--amber-light);border:1px solid #FCD34D;border-radius:var(--radius-lg);padding:14px 18px;margin-top:4px;display:flex;gap:10px;align-items:flex-start;">
+    <span style="font-size:1.1rem;flex-shrink:0;">⚠️</span>
+    <p style="font-size:.78rem;color:var(--amber);line-height:1.55;"><strong>Important:</strong> VaidIQ provides guidance and information only. It does not replace a licensed doctor. For medical emergencies, call 112. For serious symptoms, visit a hospital or consult a physician in person.</p>
+  </div>
+</div>
+
+<!-- ▸ HEALTH LOG -->
+<div class="view" id="view-healthlog">
+  <div class="pg-hd">
+    <h1><em>Health</em> Log</h1>
+    <p>Manually record readings from your own BP monitor, glucometer, weighing scale, or thermometer.</p>
+  </div>
+  <div class="log-form">
+    <div class="card-hd"><h3>Add New Reading</h3></div>
+    <div class="log-grid">
+      <div class="log-field">
+        <div class="log-lbl">Blood Pressure <span>(from your BP monitor)</span></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input class="log-in" id="logSys" type="number" placeholder="Systolic" style="flex:1;">
+          <span style="color:var(--ink-muted);font-weight:700;">/</span>
+          <input class="log-in" id="logDia" type="number" placeholder="Diastolic" style="flex:1;">
+        </div>
+        <div style="font-size:.68rem;color:var(--ink-faint);">mmHg · e.g. 120 / 80</div>
+      </div>
+      <div class="log-field">
+        <div class="log-lbl">Blood Glucose <span>(from your glucometer)</span></div>
+        <input class="log-in" id="logGlucose" type="number" placeholder="e.g. 126">
+        <select class="form-in" id="logGlucoseType" style="margin-top:4px;font-size:.74rem;padding:6px 10px;">
+          <option value="fasting">Fasting</option>
+          <option value="postmeal">Post-meal (2 hrs after eating)</option>
+          <option value="random">Random</option>
+        </select>
+      </div>
+      <div class="log-field">
+        <div class="log-lbl">Weight <span>(from weighing scale)</span></div>
+        <input class="log-in" id="logWeight" type="number" placeholder="e.g. 72" step="0.1">
+        <div style="font-size:.68rem;color:var(--ink-faint);">kilograms (kg)</div>
+      </div>
+      <div class="log-field">
+        <div class="log-lbl">Temperature <span>(from thermometer)</span></div>
+        <input class="log-in" id="logTemp" type="number" placeholder="e.g. 98.6" step="0.1">
+        <div style="font-size:.68rem;color:var(--ink-faint);">°F · Normal is 97–99°F</div>
+      </div>
+      <div class="log-field">
+        <div class="log-lbl">SpO₂ / Oxygen <span>(from pulse oximeter)</span></div>
+        <input class="log-in" id="logSpo2" type="number" placeholder="e.g. 98" max="100" min="0">
+        <div style="font-size:.68rem;color:var(--ink-faint);">% · Normal is 95–100%</div>
+      </div>
+      <div class="log-field">
+        <div class="log-lbl">Notes <span>(optional)</span></div>
+        <input class="log-in" id="logNotes" type="text" placeholder="e.g. After exercise, feeling dizzy…">
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="log-save" onclick="saveLog()">Save Reading</button>
+      <span style="font-size:.76rem;color:var(--ink-muted);">Leave blank any fields you don't have readings for.</span>
+    </div>
+    <div class="log-note">📌 Readings are saved to your account securely. Always consult a doctor to interpret them.</div>
+  </div>
+  <div class="log-history">
+    <div class="card-hd"><h3>Your Log History</h3><button class="card-link" onclick="clearLogs()">Clear all</button></div>
+    <div id="logList"><div class="log-empty"><div class="log-empty-icon">📋</div><p>Loading your logs...</p></div></div>
+  </div>
+  <div class="card" style="margin-top:16px;">
+    <div class="card-hd"><h3>📖 Normal Range Reference</h3></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:13px;"><div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:5px;">Blood Pressure</div><div style="font-size:.8rem;color:var(--ink-mid);line-height:1.6;">Normal: &lt;120/80 mmHg<br>Elevated: 120–129/&lt;80<br>High: ≥130/80 mmHg</div></div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:13px;"><div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:5px;">Blood Glucose</div><div style="font-size:.8rem;color:var(--ink-mid);line-height:1.6;">Fasting normal: 70–99 mg/dL<br>Pre-diabetic: 100–125<br>Diabetic: ≥126 mg/dL</div></div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:13px;"><div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:5px;">Temperature</div><div style="font-size:.8rem;color:var(--ink-mid);line-height:1.6;">Normal: 97–99°F<br>Low-grade fever: 99–100.4°F<br>Fever: &gt;100.4°F</div></div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:13px;"><div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin-bottom:5px;">SpO₂ (Oxygen)</div><div style="font-size:.8rem;color:var(--ink-mid);line-height:1.6;">Normal: 95–100%<br>Concern: 90–94%<br>Emergency: &lt;90%</div></div>
+    </div>
+    <p style="font-size:.74rem;color:var(--ink-muted);margin-top:12px;">General reference only. Consult your doctor for interpretation.</p>
+  </div>
+</div>
+
+<!-- ▸ SYMPTOM CHECKER -->
+<div class="view" id="view-symptoms">
+  <div class="pg-hd">
+    <h1>Symptom <em>Checker</em></h1>
+    <p>Describe your symptoms in plain language. Our AI will help assess severity and suggest next steps.</p>
+  </div>
+  <div class="chat-layout">
+    <div class="chat-main">
+      <div class="chat-bar">
+        <div class="chat-av">🩺</div>
+        <div class="chat-meta"><h3>AI Health Assistant</h3><p><span class="live-dot"></span> Online · Powered by AI</p></div>
+        <button class="btn-ghost" style="margin-left:auto;font-size:.74rem" onclick="clearChat()">Clear Chat</button>
+      </div>
+      <div class="disc">⚠️ AI guidance only — not a substitute for professional medical advice. For emergencies, call 112.</div>
+      <div class="msgs" id="chatMsgs">
+        <div class="msg-row ai">
+          <div class="msg-av-sm">🩺</div>
+          <div class="msg-body">
+            <div class="bubble">Hello! I'm your AI Health Assistant.<br><br>I can help you understand symptoms, figure out what kind of care you might need, and answer general health questions. You can write in Hindi or English.<br><br>How are you feeling today?</div>
+            <div class="msg-time">Just now</div>
+            <div class="qr-chips">
+              <div class="qr-chip" onclick="quickSend('I have a headache and mild fever since yesterday')">Headache & Fever</div>
+              <div class="qr-chip" onclick="quickSend('I have chest pain and shortness of breath')">Chest Pain</div>
+              <div class="qr-chip" onclick="quickSend('I have stomach pain and nausea since this morning')">Stomach Issues</div>
+              <div class="qr-chip" onclick="quickSend('I am diabetic and feeling very dizzy and weak')">Diabetic Symptoms</div>
+              <div class="qr-chip" onclick="quickSend('What specialist doctor should I visit?')">Which Doctor?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-foot">
+        <textarea class="chat-in" id="chatIn" placeholder="Describe your symptoms here… (Enter to send)"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doSend()}"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="doSend()">➤</button>
+      </div>
+    </div>
+    <div class="chat-right">
+      <div class="cs-card">
+        <h4>How severe are your symptoms?</h4>
+        <div class="sev-list">
+          <button class="sev-btn mild" onclick="quickSend('My symptoms are mild — slight discomfort but I can function normally')">✅ Mild — Can manage</button>
+          <button class="sev-btn mod" onclick="quickSend('My symptoms are moderate — they are affecting my daily activities')">🟡 Moderate — Affecting me</button>
+          <button class="sev-btn sev" onclick="quickSend('My symptoms are severe — I am in significant pain or distress')">🔴 Severe — Need help now</button>
+        </div>
+      </div>
+      <div class="cs-card">
+        <h4>Common Concerns</h4>
+        <div class="sev-list" style="gap:6px">
+          <button class="sev-btn" style="background:var(--blue-light);border-color:#BFDBFE;color:var(--blue)" onclick="quickSend('I have had a high fever above 102°F for more than 3 days')">🌡️ High Fever</button>
+          <button class="sev-btn" style="background:var(--teal-pale);border-color:var(--teal-light);color:var(--teal-dark)" onclick="quickSend('I want affordable medicine alternatives for my prescription')">💊 Medicine Costs</button>
+          <button class="sev-btn" style="background:var(--violet-light);border-color:#DDD6FE;color:var(--violet)" onclick="quickSend('I have been feeling very anxious and stressed lately')">🧠 Mental Health</button>
+          <button class="sev-btn" style="background:var(--amber-light);border-color:#FCD34D;color:var(--amber)" onclick="quickSend('I am pregnant and have some concerns about my symptoms')">🤰 Pregnancy</button>
+        </div>
+      </div>
+      <div class="emg-panel">
+        <h4>🚨 Call 112 Immediately For:</h4>
+        <p>• Chest pain / pressure<br>• Difficulty breathing<br>• Sudden unconsciousness<br>• Severe bleeding<br>• Signs of stroke (FAST)<br>• Suspected poisoning</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ MEDICINES -->
+<div class="view" id="view-medicines">
+  <div class="pg-hd"><h1>Medicine <em>Search</em></h1><p>Search by name, salt, or composition. Find affordable generics and Jan Aushadhi alternatives.</p></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+    <div class="card">
+      <div class="card-hd"><h3>💊 Today's Medication Schedule</h3></div>
+      <div class="sched-list">
+        <div class="sched-slot">
+          <div class="slot-time"><div class="st">8 AM</div><div class="ss">Morning</div></div>
+          <div class="slot-meds">
+            <div class="med-item"><div class="med-pill-icon" style="background:var(--blue-light)">💊</div><div class="med-item-info"><h5>Metformin 500mg</h5><p>1 tablet · After breakfast</p><div class="med-item-time">8:00 AM <span class="late-tag lt-done">✓ Taken</span></div></div><div class="check-box done" onclick="toggleCheck(this)">✓</div></div>
+          </div>
+        </div>
+        <div class="sched-slot">
+          <div class="slot-time"><div class="st">2 PM</div><div class="ss">Afternoon</div></div>
+          <div class="slot-meds">
+            <div class="med-item"><div class="med-pill-icon" style="background:var(--amber-light)">💊</div><div class="med-item-info"><h5>Vitamin D3 60K IU</h5><p>1 capsule · Weekly dose</p><div class="med-item-time">2:00 PM <span class="late-tag lt-due">Due now</span></div></div><div class="check-box" onclick="toggleCheck(this)">○</div></div>
+          </div>
+        </div>
+        <div class="sched-slot">
+          <div class="slot-time"><div class="st">8 PM</div><div class="ss">Evening</div></div>
+          <div class="slot-meds">
+            <div class="med-item"><div class="med-pill-icon" style="background:var(--teal-pale)">💊</div><div class="med-item-info"><h5>Metformin 500mg</h5><p>1 tablet · After dinner</p><div class="med-item-time">8:00 PM <span class="late-tag lt-upcoming">Upcoming</span></div></div><div class="check-box" onclick="toggleCheck(this)">○</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h3>📦 Upcoming Refills</h3></div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--red-pale);border:1px solid #FECACA;border-radius:8px;"><div><div style="font-size:.82rem;font-weight:700;color:var(--ink)">Metformin 500mg</div><div style="font-size:.7rem;color:var(--red)">Runs out in 3 days</div></div><button class="hbtn fill" style="font-size:.72rem;padding:6px 12px" onclick="toast('Visit janaushadhi.gov.in to find a nearby store')">Refill</button></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;"><div><div style="font-size:.82rem;font-weight:700;color:var(--ink)">Atorvastatin 10mg</div><div style="font-size:.7rem;color:var(--ink-muted)">Runs out in 12 days</div></div><button class="hbtn out" style="font-size:.72rem;padding:6px 12px" onclick="toast('Reminder set! We will notify you in 8 days.')">Remind Me</button></div>
+      </div>
+      <div style="background:var(--teal-pale);border:1px solid var(--teal-light);border-radius:var(--radius);padding:12px;margin-top:12px;">
+        <div style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--teal);margin-bottom:4px;">💡 Save with Jan Aushadhi</div>
+        <p style="font-size:.76rem;color:var(--ink-mid);line-height:1.55;">Jan Aushadhi stores sell generic medicines at up to 90% lower cost. Visit <strong>janaushadhi.gov.in</strong> to find your nearest store.</p>
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+    <div class="card-hd"><h3>Search Medicines</h3></div>
+    <div class="med-bar">
+      <div class="med-in">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-faint)" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="medQ" placeholder="e.g. Paracetamol, Metformin 500mg, Amoxicillin…" onkeydown="if(event.key==='Enter')runMedSearch()">
+      </div>
+      <button class="btn-srch" onclick="runMedSearch()">Search</button>
+    </div>
+    <div class="filter-strip" id="medFilters">
+      <div class="ftag active" onclick="setMedFilter(this,'all')">All</div>
+      <div class="ftag" onclick="setMedFilter(this,'generic')">Generic</div>
+      <div class="ftag" onclick="setMedFilter(this,'ja')">Jan Aushadhi</div>
+      <div class="ftag" onclick="setMedFilter(this,'otc')">OTC (No Rx needed)</div>
+      <div class="ftag" onclick="setMedFilter(this,'rx')">Prescription</div>
+    </div>
+    <div class="med-grid" id="medResults"><div style="padding:30px;text-align:center;color:var(--ink-muted);font-size:.85rem;">Loading medicines...</div></div>
+  </div>
+</div>
+
+<!-- ▸ MEDICAL RECORDS -->
+<div class="view" id="view-records">
+  <div class="pg-hd pg-hd-row"><div><h1>Medical <em>Records</em></h1><p>Keep all your health documents organized in one place</p></div></div>
+  <div class="upload-area" onclick="document.getElementById('fileUploadInput').click()">
+    <div class="up-icon">📤</div>
+    <p><strong>Click to upload a document</strong><br>Supports PDF, JPG, PNG · Prescriptions, Lab reports, X-rays · Max 10 MB</p>
+  </div>
+  <input type="file" id="fileUploadInput" accept=".pdf,.jpg,.jpeg,.png,.webp" onchange="handleFileUpload(this)">
+  <!-- Upload form (shown after file selected) -->
+  <div id="uploadForm" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;">
+    <div class="card-hd"><h3>Document Details</h3></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-lbl">Document Title *</label><input type="text" class="form-in" id="uploadTitle" placeholder="e.g. Blood Test Results"></div>
+      <div class="form-group"><label class="form-lbl">Category *</label>
+        <select class="form-in" id="uploadCat">
+          <option value="lab">Lab Report</option>
+          <option value="prescription">Prescription</option>
+          <option value="imaging">X-Ray / MRI / CT</option>
+          <option value="vaccination">Vaccination</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-lbl">Doctor Name</label><input type="text" class="form-in" id="uploadDoctor" placeholder="Dr. Rajesh Kumar"></div>
+      <div class="form-group"><label class="form-lbl">Hospital / Lab</label><input type="text" class="form-in" id="uploadHospital" placeholder="AIIMS, Max Hospital..."></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-lbl">Document Date</label><input type="date" class="form-in" id="uploadDate"></div>
+      <div class="form-group"><label class="form-lbl">Notes</label><input type="text" class="form-in" id="uploadNotes" placeholder="Any additional notes"></div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-primary" onclick="submitUpload()">Upload Document</button>
+      <button class="btn-ghost" onclick="cancelUpload()">Cancel</button>
+    </div>
+  </div>
+  <div class="records-cats" id="recordCats">
+    <div class="rec-cat" onclick="filterRecords('lab')"><div class="rc-icon" style="background:var(--blue-light)">🧪</div><div class="rc-name">Lab Reports</div><div class="rc-count" id="cnt-lab">0 files</div></div>
+    <div class="rec-cat" onclick="filterRecords('prescription')"><div class="rc-icon" style="background:var(--green-light)">📝</div><div class="rc-name">Prescriptions</div><div class="rc-count" id="cnt-prescription">0 files</div></div>
+    <div class="rec-cat" onclick="filterRecords('imaging')"><div class="rc-icon" style="background:var(--violet-light)">🩻</div><div class="rc-name">X-Ray / MRI / CT</div><div class="rc-count" id="cnt-imaging">0 files</div></div>
+    <div class="rec-cat" onclick="filterRecords('vaccination')"><div class="rc-icon" style="background:var(--amber-light)">💉</div><div class="rc-name">Vaccinations</div><div class="rc-count" id="cnt-vaccination">0 files</div></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;">
+    <span style="font-size:.87rem;font-weight:700;color:var(--ink)" id="recListTitle">Recent Documents</span>
+    <button class="card-link" onclick="loadRecords()">Refresh</button>
+  </div>
+  <div class="rec-docs" id="recList"><div style="padding:24px;text-align:center;color:var(--ink-muted);font-size:.85rem;">Loading records...</div></div>
+</div>
+
+<!-- ▸ HOSPITALS -->
+<div class="view" id="view-hospitals">
+  <div class="pg-hd"><h1>Find <em>Hospitals</em></h1><p>Locate government and private hospitals near you, filtered by type and specialty.</p></div>
+  <div class="hosp-toolbar">
+    <div class="loc-pill">📍 Delhi NCR</div>
+    <div class="hosp-search">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink-faint)" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search hospitals or specialties…" oninput="filterHospByName(this.value)">
+    </div>
+    <div class="filter-strip" style="margin:0">
+      <div class="ftag active" onclick="setHospFilter(this,'all')">All</div>
+      <div class="ftag" onclick="setHospFilter(this,'govt')">Government (Free)</div>
+      <div class="ftag" onclick="setHospFilter(this,'private')">Private</div>
+      <div class="ftag" onclick="setHospFilter(this,'clinic')">Clinic</div>
+      <div class="ftag" onclick="setHospFilter(this,'emergency')">Has Emergency</div>
+    </div>
+  </div>
+  <div class="hosp-layout">
+    <div class="hosp-list" id="hospResults"><div style="padding:30px;text-align:center;color:var(--ink-muted);">Loading hospitals...</div></div>
+    <div>
+      <div class="map-panel">
+        <div class="map-area" onclick="toast('Google Maps integration — coming in Phase 2')"><span style="font-size:2.2rem;">🗺️</span><p>Map view coming in Phase 2.<br>Search "hospitals near me" on Google Maps.</p></div>
+        <div class="map-foot"><h4>Map Integration</h4><p>Phase 2 will include interactive live maps</p></div>
+      </div>
+      <div class="emg-box"><h4>🚑 Ambulance · 108 / 112</h4><p>Free government ambulance across India. Call 108 for medical emergencies, 112 for all emergencies.</p><button class="call-btn" onclick="toast('Please dial 112 on your phone now','error')">📞 Call 112 Now</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ APPOINTMENTS -->
+<div class="view" id="view-appointments">
+  <div class="pg-hd"><h1>Book <em>Appointment</em></h1><p>Schedule consultations with verified specialists.</p></div>
+  <div class="appt-grid">
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-hd"><h3>New Appointment</h3></div>
+        <div style="display:flex;flex-direction:column;gap:13px;">
+          <div class="form-group"><label class="form-lbl">Select Specialty</label>
+            <select class="form-in" id="apptSpecialty"><option>General Physician (GP)</option><option>Cardiologist (Heart)</option><option>Endocrinologist (Diabetes/Hormones)</option><option>Neurologist (Brain/Nerves)</option><option>Orthopedic (Bones/Joints)</option><option>Gynecologist</option><option>Pediatrician (Children)</option><option>Dermatologist (Skin)</option><option>ENT Specialist</option><option>Ophthalmologist (Eyes)</option></select>
+          </div>
+          <div class="form-group"><label class="form-lbl">Doctor Name</label><input type="text" class="form-in" id="apptDoctor" placeholder="Dr. Rajesh Kumar"></div>
+          <div class="form-group"><label class="form-lbl">Appointment Date</label><input type="date" class="form-in" id="apptDate"></div>
+          <div>
+            <label class="form-lbl" style="margin-bottom:8px;display:block;">Preferred Time Slot</label>
+            <div class="time-slots" id="timeSlots">
+              <div class="tslot" onclick="selectSlot(this)">9:00 AM</div>
+              <div class="tslot" onclick="selectSlot(this)">11:00 AM</div>
+              <div class="tslot active" onclick="selectSlot(this)">2:00 PM</div>
+              <div class="tslot" onclick="selectSlot(this)">4:00 PM</div>
+              <div class="tslot" onclick="selectSlot(this)">6:00 PM</div>
+              <div class="tslot" onclick="selectSlot(this)">8:00 PM</div>
+            </div>
+          </div>
+          <div>
+            <label class="form-lbl" style="margin-bottom:7px;display:block;">Consultation Type</label>
+            <div class="type-toggle">
+              <button class="type-btn active-sch" id="typeInperson" onclick="setApptType('inperson')">🏥 In-Person</button>
+              <button class="type-btn" id="typeVideo" onclick="setApptType('video')">📹 Video Call</button>
+            </div>
+          </div>
+          <div class="appt-summary">
+            <div class="fee-row"><span>Consultation Fee</span><span>₹500</span></div>
+            <div class="fee-row"><span>Platform Fee</span><span>₹50</span></div>
+            <div class="fee-divider"></div>
+            <div class="fee-total"><span>Total</span><span>₹550</span></div>
+          </div>
+          <button class="btn-primary" style="width:100%;padding:11px;font-size:.86rem;justify-content:center;" onclick="bookAppointment()">Confirm Appointment →</button>
+        </div>
+      </div>
+      <div class="notif-info"><span>🔔</span><p>You'll receive a confirmation for your appointment. Please carry a valid ID and any previous medical records when visiting.</p></div>
+    </div>
+    <div>
+      <div style="font-size:.87rem;font-weight:700;color:var(--ink);margin-bottom:11px;">Upcoming Appointments</div>
+      <div class="upcoming-appts" id="apptList"><div style="padding:24px;text-align:center;color:var(--ink-muted);font-size:.84rem;">Loading appointments...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ AMBULANCE -->
+<div class="view" id="view-ambulance">
+  <div class="amb-hero">
+    <h2>🚑 Book Ambulance</h2>
+    <p>Fast, reliable ambulance service. Emergency dispatch available 24/7. For fastest response always call 108 or 112 directly.</p>
+    <div class="amb-ctas">
+      <button class="amb-cta primary" onclick="toast('Please dial 108 on your phone now — it is the fastest way to get an ambulance','error')">📞 Call 108 — Free Ambulance</button>
+      <button class="amb-cta secondary" onclick="showView('hospitals')">🏥 Nearest Emergency Room</button>
+    </div>
+  </div>
+  <div class="amb-form">
+    <div style="margin-bottom:14px;"><div style="font-size:.87rem;font-weight:700;color:var(--ink);margin-bottom:7px;">Booking Type</div>
+      <div class="type-toggle">
+        <button class="type-btn" style="background:var(--red-pale);border-color:#FCA5A5;color:var(--red)" id="ambEmg" onclick="setAmbType('emergency')">🚨 Emergency</button>
+        <button class="type-btn" id="ambSch" onclick="setAmbType('scheduled')">📅 Scheduled Transport</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-lbl">Pickup Location *</label><input type="text" class="form-in" id="ambPickup" placeholder="Enter full address or landmark"></div>
+      <div class="form-group"><label class="form-lbl">Drop Location (Hospital) *</label><input type="text" class="form-in" id="ambDrop" placeholder="Enter hospital name or address"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-lbl">Ambulance Type</label>
+        <select class="form-in" id="ambType">
+          <option value="bls">Basic Life Support (BLS) — General transport</option>
+          <option value="als">Advanced Life Support (ALS) — ICU-equipped</option>
+          <option value="transport">Patient Transport — Non-emergency</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-lbl">Contact Number *</label><input type="tel" class="form-in" id="ambPhone" placeholder="+91 XXXXX XXXXX"></div>
+    </div>
+    <div class="form-group" style="margin-bottom:14px;"><label class="form-lbl">Patient Condition</label><textarea class="form-in" id="ambCondition" rows="3" placeholder="Brief description of the patient's condition…"></textarea></div>
+    <button class="btn-emg" style="width:100%;padding:13px;font-size:.88rem;justify-content:center;" onclick="bookAmbulance()">🚑 Book Ambulance Now</button>
+  </div>
+  <div style="background:var(--blue-light);border:1px solid #BFDBFE;border-radius:var(--radius-lg);padding:14px;display:flex;align-items:center;gap:12px;">
+    <span style="font-size:1.5rem;flex-shrink:0;">⏱️</span>
+    <div><div style="font-size:.86rem;font-weight:700;color:var(--blue);margin-bottom:2px;">Estimated Arrival</div><p style="font-size:.76rem;color:#1E40AF;line-height:1.4;">Emergency ambulances typically arrive in <strong>8–15 minutes</strong> in urban areas. For the fastest response, always call 108 or 112 directly on your phone.</p></div>
+  </div>
+</div>
+
+<!-- ▸ EMERGENCY -->
+<div class="view" id="view-emergency">
+  <div class="pg-hd"><h1>Emergency <em>Info</em></h1><p>Quick access to emergency numbers and critical health guidance.</p></div>
+  <div class="emg-card-main">
+    <h2>🆘 Emergency Services</h2>
+    <p>Quick access to life-saving emergency medical care. These numbers work across all of India, 24/7.</p>
+    <div class="emg-btns">
+      <button class="emg-btn white" onclick="toast('Please dial 108 on your phone immediately','error')">📞 Ambulance (108)</button>
+      <button class="emg-btn dark" onclick="showView('hospitals')">🏥 Nearest Emergency Room</button>
+      <button class="emg-btn dark" onclick="showView('ambulance')">🚑 Book Ambulance</button>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+    <div class="contacts-card">
+      <div class="card-hd"><h3>📞 Emergency Numbers — India</h3></div>
+      <div class="contacts-list">
+        <div class="contact-item"><div class="contact-info"><h5>National Ambulance</h5><p>Free medical emergency service</p></div><button class="call-chip" onclick="toast('Dial 108 on your phone')">108</button></div>
+        <div class="contact-item"><div class="contact-info"><h5>Unified Emergency</h5><p>All emergencies (like 911)</p></div><button class="call-chip" onclick="toast('Dial 112 on your phone')">112</button></div>
+        <div class="contact-item"><div class="contact-info"><h5>Police</h5><p>Law Enforcement</p></div><button class="call-chip" onclick="toast('Dial 100 on your phone')">100</button></div>
+        <div class="contact-item"><div class="contact-info"><h5>Fire Service</h5><p>Fire & Rescue</p></div><button class="call-chip" onclick="toast('Dial 101 on your phone')">101</button></div>
+        <div class="contact-item"><div class="contact-info"><h5>Women Helpline</h5><p>24/7 Support</p></div><button class="call-chip" onclick="toast('Dial 1091 on your phone')">1091</button></div>
+        <div class="contact-item"><div class="contact-info"><h5>iCall Mental Health</h5><p>Tata Institute helpline</p></div><button class="call-chip" onclick="toast('Dial 9152987821 on your phone')">9152987821</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h3>Stroke — FAST Method</h3></div>
+      <div class="fast-grid">
+        <div class="fast-item"><div class="fast-letter">F</div><div class="fast-word">Face</div><div class="fast-desc">Drooping on one side?</div></div>
+        <div class="fast-item"><div class="fast-letter">A</div><div class="fast-word">Arms</div><div class="fast-desc">One arm weak / numb?</div></div>
+        <div class="fast-item"><div class="fast-letter">S</div><div class="fast-word">Speech</div><div class="fast-desc">Slurred or confused?</div></div>
+        <div class="fast-item"><div class="fast-letter">T</div><div class="fast-word">Time</div><div class="fast-desc">Call 112 immediately</div></div>
+      </div>
+      <div style="margin-top:14px;background:var(--amber-light);border:1px solid #FCD34D;border-radius:var(--radius);padding:12px;">
+        <div style="font-size:.73rem;font-weight:700;color:var(--amber);margin-bottom:4px;">❤️ Heart Attack Warning Signs</div>
+        <p style="font-size:.74rem;color:var(--ink-mid);line-height:1.55;">Chest pressure · Pain in arm, jaw, or back · Shortness of breath · Cold sweats · Nausea · Lightheadedness</p>
+      </div>
+      <div style="margin-top:10px;background:var(--red-pale);border:1px solid #FECACA;border-radius:var(--radius);padding:12px;">
+        <div style="font-size:.73rem;font-weight:700;color:var(--red);margin-bottom:4px;">🩸 Severe Bleeding</div>
+        <p style="font-size:.74rem;color:var(--ink-mid);line-height:1.55;">Apply firm pressure · Don't remove the cloth · Elevate above heart level · Call 112</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ PROFILE -->
+<div class="view" id="view-profile">
+  <div class="pg-hd"><h1>My <em>Profile</em></h1><p>Your health information and app preferences.</p></div>
+  <div class="profile-layout">
+    <div class="prof-left">
+      <div class="prof-hero">
+        <div class="prof-hero-inner">
+          <div class="prof-av">👤</div>
+          <div class="prof-name" id="profName">Loading...</div>
+          <div class="prof-sub" id="profSub">...</div>
+        </div>
+        <div class="prof-stats">
+          <div class="ps"><div class="ps-val" id="profHeight">—</div><div class="ps-key">Height</div></div>
+          <div class="ps"><div class="ps-val" id="profWeight">—</div><div class="ps-key">Weight</div></div>
+          <div class="ps"><div class="ps-val" id="profBlood">—</div><div class="ps-key">Blood Group</div></div>
+          <div class="ps"><div class="ps-val" id="profAllergy">—</div><div class="ps-key">Allergies</div></div>
+        </div>
+      </div>
+      <div class="prof-section">
+        <div class="psec-lbl">Quick Links</div>
+        <div class="prow" onclick="showView('healthlog')"><div class="prow-icon" style="background:var(--green-light)">📋</div><div class="prow-info"><h5>Health Log</h5><p>View your manual readings history</p></div><span class="prow-arr">›</span></div>
+        <div class="prow" onclick="showView('records')"><div class="prow-icon" style="background:var(--blue-light)">📁</div><div class="prow-info"><h5>Medical Records</h5><p>Prescriptions, Lab reports</p></div><span class="prow-arr">›</span></div>
+        <div class="prow" onclick="showView('medicines')"><div class="prow-icon" style="background:var(--amber-light)">💊</div><div class="prow-info"><h5>Medicine Tracker</h5><p>Today's schedule</p></div><span class="prow-arr">›</span></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:13px;">
+      <div class="prof-section">
+        <div class="psec-lbl">Medical Information</div>
+        <div class="prow"><div class="prow-icon" style="background:var(--blue-light)">💊</div><div class="prow-info"><h5>Current Medications</h5><p>Metformin 500mg · Atorvastatin 10mg</p></div><span class="prow-arr">›</span></div>
+        <div class="prow"><div class="prow-icon" style="background:var(--red-pale)">⚠️</div><div class="prow-info"><h5>Allergies</h5><p id="profAllergyDetail">None recorded</p></div><span class="prow-arr">›</span></div>
+        <div class="prow" onclick="showView('emergency')"><div class="prow-icon" style="background:var(--red-pale)">🆘</div><div class="prow-info"><h5>Emergency Contacts</h5><p id="profEmgContact">Not set</p></div><span class="prow-arr">›</span></div>
+      </div>
+      <div class="prof-section">
+        <div class="psec-lbl">Update Profile</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 6px;">
+          <div class="form-group"><label class="form-lbl">Height (cm)</label><input type="number" class="form-in" id="editHeight" placeholder="e.g. 174"></div>
+          <div class="form-group"><label class="form-lbl">Weight (kg)</label><input type="number" class="form-in" id="editWeight" step="0.1" placeholder="e.g. 72"></div>
+          <div class="form-group"><label class="form-lbl">Blood Group</label>
+            <select class="form-in" id="editBlood"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+          </div>
+          <div class="form-group"><label class="form-lbl">Age</label><input type="number" class="form-in" id="editAge" placeholder="e.g. 32"></div>
+          <div class="form-group" style="grid-column:1/-1"><label class="form-lbl">Allergies</label><input type="text" class="form-in" id="editAllergies" placeholder="e.g. Penicillin, Dust — or leave blank"></div>
+          <div class="form-group" style="grid-column:1/-1"><label class="form-lbl">Emergency Contact</label><div style="display:flex;gap:8px;"><input type="text" class="form-in" id="editEmgName" placeholder="Name (e.g. Priya Sharma)"><input type="tel" class="form-in" id="editEmgPhone" placeholder="+91 98765 00000"></div></div>
+        </div>
+        <button class="btn-primary" style="margin:4px 6px;" onclick="saveProfile()">Save Profile</button>
+      </div>
+      <div class="prof-section">
+        <div class="psec-lbl">About VaidIQ</div>
+        <div class="prow"><div class="prow-icon" style="background:var(--teal-pale)">ℹ️</div><div class="prow-info"><h5>App Version</h5></div><div class="prow-val">v1.0 · Phase 1</div></div>
+        <div class="prow"><div class="prow-icon" style="background:var(--red-pale)">⚠️</div><div class="prow-info"><h5>Medical Disclaimer</h5><p>AI guidance only — not a diagnosis</p></div><span class="prow-arr">›</span></div>
+      </div>
+      <button style="width:100%;padding:11px;background:var(--red-pale);color:var(--red);border:1px solid #FECACA;border-radius:var(--radius-lg);font-size:.82rem;font-weight:700;cursor:pointer;" onclick="doLogout()">Log Out</button>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// CONFIG — change this if backend runs on a different port
+// ══════════════════════════════════════════════════════════
+const API = "http://localhost:4000/api";
+
+// ── State ──────────────────────────────────────────────────
+let TOKEN    = localStorage.getItem("vaidiq_token") || "";
+let USER     = JSON.parse(localStorage.getItem("vaidiq_user") || "null");
+let chatSessionId = null;
+const chatHistory = [];
+let aiTyping = false;
+let medFilter = "all";
+let hospFilter = "all", hospQuery = "";
+let allHospitals = [], allMedicines = [];
+let pendingFile = null;
+
+// ── Helpers ────────────────────────────────────────────────
+function api(path, opts = {}) {
+  return fetch(API + path, {
+    ...opts,
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}`, ...(opts.headers || {}) },
+  }).then(r => r.json());
+}
+
+let toastTmr;
+function toast(msg, type = "") {
+  const el = document.getElementById("toastEl");
+  el.textContent = msg;
+  el.className = "toast show" + (type ? " " + type : "");
+  clearTimeout(toastTmr);
+  toastTmr = setTimeout(() => el.classList.remove("show"), 3200);
+}
+
+// ── Auth ────────────────────────────────────────────────────
+function switchAuth(tab) {
+  document.querySelector(".auth-tab button:nth-child(1)").classList.toggle("active", tab === "login");
+  document.querySelector(".auth-tab button:nth-child(2)").classList.toggle("active", tab === "register");
+  document.getElementById("loginForm").style.display    = tab === "login"    ? "" : "none";
+  document.getElementById("registerForm").style.display = tab === "register" ? "" : "none";
+  document.getElementById("authErr").classList.remove("show");
+}
+
+function showAuthErr(msg) {
+  const el = document.getElementById("authErr");
+  el.textContent = msg;
+  el.classList.add("show");
+}
+
+async function doLogin() {
+  const phone = document.getElementById("loginPhone").value.trim();
+  const password = document.getElementById("loginPass").value;
+  if (!phone || !password) return showAuthErr("Please enter your phone and password.");
+  const res = await fetch(API + "/auth/login", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ phone, password }),
+  }).then(r => r.json());
+  if (res.error) return showAuthErr(res.error);
+  onAuthSuccess(res);
+}
+
+async function doRegister() {
+  const fullName = document.getElementById("regName").value.trim();
+  const phone    = document.getElementById("regPhone").value.trim();
+  const password = document.getElementById("regPass").value;
+  const city     = document.getElementById("regCity").value.trim();
+  if (!fullName || !phone || !password) return showAuthErr("Full name, phone, and password are required.");
+  const res = await fetch(API + "/auth/register", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fullName, phone, password, city }),
+  }).then(r => r.json());
+  if (res.error) return showAuthErr(res.error);
+  onAuthSuccess(res);
+}
+
+function onAuthSuccess(res) {
+  TOKEN = res.token;
+  USER  = { id: res.userId, fullName: res.fullName };
+  localStorage.setItem("vaidiq_token", TOKEN);
+  localStorage.setItem("vaidiq_user", JSON.stringify(USER));
+  document.getElementById("authOverlay").style.display = "none";
+  document.getElementById("hdrUser").textContent = res.fullName;
+  document.getElementById("dashName").textContent = res.fullName.split(" ")[0];
+  loadUserProfile();
+  loadInitialData();
+}
+
+function doLogout() {
+  TOKEN = ""; USER = null;
+  localStorage.removeItem("vaidiq_token");
+  localStorage.removeItem("vaidiq_user");
+  location.reload();
+}
+
+// ── Navigation ──────────────────────────────────────────────
+function showView(id) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById("view-" + id).classList.add("active");
+  const nl = document.getElementById("nl-" + id);
+  if (nl) nl.classList.add("active");
+  if (id === "hospitals")   renderHosps(filterHosps());
+  if (id === "medicines")   renderMeds(filterMeds(""));
+  if (id === "healthlog")   loadLogs();
+  if (id === "records")     loadRecords();
+  if (id === "appointments") loadAppointments();
+}
+
+// ── User Profile ─────────────────────────────────────────────
+async function loadUserProfile() {
+  const user = await api("/users/me");
+  if (user.error) return;
+  document.getElementById("profName").textContent  = user.fullName;
+  document.getElementById("dashName").textContent  = user.fullName.split(" ")[0];
+  document.getElementById("hdrUser").textContent   = user.fullName;
+  document.getElementById("profSub").textContent   = `${user.age ? "Age " + user.age + " · " : ""}${user.city || "India"}`;
+  document.getElementById("profHeight").textContent = user.heightCm ? user.heightCm + " cm" : "—";
+  document.getElementById("profWeight").textContent = user.weightKg ? user.weightKg + " kg" : "—";
+  document.getElementById("profBlood").textContent  = user.bloodGroup || "—";
+  document.getElementById("profAllergy").textContent = user.allergies ? "Yes" : "None";
+  document.getElementById("profAllergyDetail").textContent = user.allergies || "None recorded";
+  document.getElementById("profEmgContact").textContent = user.emergencyContactName
+    ? `${user.emergencyContactName} · ${user.emergencyContactPhone || ""}` : "Not set";
+  // Prefill edit fields
+  if (user.heightCm) document.getElementById("editHeight").value = user.heightCm;
+  if (user.weightKg) document.getElementById("editWeight").value = user.weightKg;
+  if (user.bloodGroup) document.getElementById("editBlood").value = user.bloodGroup;
+  if (user.age) document.getElementById("editAge").value = user.age;
+  if (user.allergies) document.getElementById("editAllergies").value = user.allergies;
+  if (user.emergencyContactName) document.getElementById("editEmgName").value = user.emergencyContactName;
+  if (user.emergencyContactPhone) document.getElementById("editEmgPhone").value = user.emergencyContactPhone;
+}
+
+async function saveProfile() {
+  const res = await api("/users/me", {
+    method: "PATCH",
+    body: JSON.stringify({
+      heightCm: parseFloat(document.getElementById("editHeight").value) || null,
+      weightKg: parseFloat(document.getElementById("editWeight").value) || null,
+      bloodGroup: document.getElementById("editBlood").value || null,
+      age: parseInt(document.getElementById("editAge").value) || null,
+      allergies: document.getElementById("editAllergies").value || null,
+      emergencyContactName: document.getElementById("editEmgName").value || null,
+      emergencyContactPhone: document.getElementById("editEmgPhone").value || null,
+    }),
+  });
+  if (res.error) return toast("Error: " + res.error, "error");
+  toast("Profile saved!", "success");
+  loadUserProfile();
+}
+
+// ── Health Log ────────────────────────────────────────────────
+async function saveLog() {
+  const sys = document.getElementById("logSys").value;
+  const dia = document.getElementById("logDia").value;
+  const glucose = document.getElementById("logGlucose").value;
+  const glucoseType = document.getElementById("logGlucoseType").value;
+  const weight = document.getElementById("logWeight").value;
+  const temp = document.getElementById("logTemp").value;
+  const spo2 = document.getElementById("logSpo2").value;
+  const notes = document.getElementById("logNotes").value.trim();
+  const body = {
+    bpSystolic: sys ? parseInt(sys) : null,
+    bpDiastolic: dia ? parseInt(dia) : null,
+    glucoseMgdl: glucose ? parseFloat(glucose) : null,
+    glucoseType: glucose ? glucoseType : null,
+    weightKg: weight ? parseFloat(weight) : null,
+    temperatureF: temp ? parseFloat(temp) : null,
+    spo2Percent: spo2 ? parseFloat(spo2) : null,
+    notes,
+  };
+  const res = await api("/health-log", { method: "POST", body: JSON.stringify(body) });
+  if (res.error) return toast("Error: " + res.error, "error");
+  ["logSys","logDia","logGlucose","logWeight","logTemp","logSpo2","logNotes"].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = "";
+  });
+  toast("Reading saved!", "success");
+  loadLogs();
+}
+
+async function loadLogs() {
+  const logs = await api("/health-log?limit=30");
+  renderLogs(Array.isArray(logs) ? logs : []);
+}
+
+function renderLogs(logs) {
+  const list = document.getElementById("logList");
+  if (!logs.length) {
+    list.innerHTML = '<div class="log-empty"><div class="log-empty-icon">📋</div><p>No readings logged yet.<br>Add your first reading above.</p></div>';
+    return;
+  }
+  list.innerHTML = logs.map(l => {
+    const d = new Date(l.createdAt);
+    const day = d.getDate();
+    const mon = d.toLocaleString("default", { month: "short" }).toUpperCase();
+    const time = d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+    const chips = [];
+    if (l.bpSystolic) chips.push(`<div class="log-val-chip"><strong>${l.bpSystolic}/${l.bpDiastolic} mmHg</strong> <span>BP</span></div>`);
+    if (l.glucoseMgdl) chips.push(`<div class="log-val-chip"><strong>${l.glucoseMgdl} mg/dL</strong> <span>Glucose (${l.glucoseType})</span></div>`);
+    if (l.weightKg) chips.push(`<div class="log-val-chip"><strong>${l.weightKg} kg</strong> <span>Weight</span></div>`);
+    if (l.temperatureF) chips.push(`<div class="log-val-chip"><strong>${l.temperatureF}°F</strong> <span>Temp</span></div>`);
+    if (l.spo2Percent) chips.push(`<div class="log-val-chip"><strong>${l.spo2Percent}%</strong> <span>SpO₂</span></div>`);
+    const noteHtml = l.notes ? `<div style="font-size:.7rem;color:var(--ink-muted);margin-top:5px;">📝 ${l.notes}</div>` : "";
+    return `<div class="log-entry"><div class="log-entry-date"><div class="ld">${day}</div><div class="lm">${mon}</div></div><div class="log-entry-body"><h5>${time}</h5><div class="log-entry-vals">${chips.join("")}</div>${noteHtml}</div><button class="log-del" onclick="deleteLog('${l._id}')">✕</button></div>`;
+  }).join("");
+}
+
+async function deleteLog(id) {
+  await api("/health-log/" + id, { method: "DELETE" });
+  loadLogs();
+}
+
+async function clearLogs() {
+  if (!confirm("Clear all health logs?")) return;
+  await api("/health-log", { method: "DELETE" });
+  loadLogs();
+  toast("All logs cleared.");
+}
+
+// ── Chat ───────────────────────────────────────────────────────
+async function doSend() {
+  const el = document.getElementById("chatIn");
+  const txt = el.value.trim();
+  if (!txt || aiTyping) return;
+  el.value = ""; el.style.height = "auto";
+  appendMsg("user", txt);
+  chatHistory.push({ role: "user", content: txt });
+  showTyping();
+  try {
+    const res = await api("/chat", {
+      method: "POST",
+      body: JSON.stringify({ message: txt, sessionId: chatSessionId }),
+    });
+    hideTyping();
+    if (res.error) { appendMsg("ai", "Sorry, I couldn't connect. Please try again. For emergencies, call 112."); return; }
+    chatSessionId = res.sessionId;
+    chatHistory.push({ role: "assistant", content: res.reply });
+    appendMsg("ai", res.reply, res.isEmergency);
+  } catch {
+    hideTyping();
+    appendMsg("ai", "Connection issue. Please check your internet and try again. For emergencies, call 112 immediately.");
+  }
+}
+
+function quickSend(txt) { document.getElementById("chatIn").value = txt; doSend(); }
+
+function appendMsg(role, text, isEmergency = false) {
+  const c = document.getElementById("chatMsgs");
+  const now = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+  const d = document.createElement("div");
+  d.className = "msg-row " + role;
+  const bubbleClass = isEmergency ? "bubble emergency" : "bubble";
+  if (role === "ai") {
+    d.innerHTML = `<div class="msg-av-sm">🩺</div><div class="msg-body"><div class="${bubbleClass}">${fmt(text)}</div><div class="msg-time">${now}</div></div>`;
+  } else {
+    d.innerHTML = `<div class="msg-body"><div class="bubble">${esc(text)}</div><div class="msg-time">${now}</div></div><div class="msg-av-sm" style="background:#EDE9FE">👤</div>`;
+  }
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
+}
+
+function fmt(t) { return esc(t).replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/\n\n/g, "<br><br>").replace(/\n/g, "<br>"); }
+function esc(t) { return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function showTyping() {
+  aiTyping = true; document.getElementById("sendBtn").disabled = true;
+  const c = document.getElementById("chatMsgs");
+  const d = document.createElement("div"); d.className = "msg-row ai"; d.id = "typingRow";
+  d.innerHTML = `<div class="msg-av-sm">🩺</div><div class="msg-body"><div class="bubble"><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div></div></div>`;
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
+}
+function hideTyping() {
+  aiTyping = false; document.getElementById("sendBtn").disabled = false;
+  const r = document.getElementById("typingRow"); if (r) r.remove();
+}
+function clearChat() {
+  chatHistory.length = 0; chatSessionId = null;
+  document.getElementById("chatMsgs").innerHTML = "";
+  appendMsg("ai", "Chat cleared. How can I help you today?");
+}
+
+// ── Medicines ──────────────────────────────────────────────────
+async function loadMedicines() {
+  const res = await api("/medicines");
+  allMedicines = res.medicines || [];
+  renderMeds(allMedicines);
+}
+
+function setMedFilter(el, f) {
+  document.querySelectorAll("#medFilters .ftag").forEach(t => t.classList.remove("active"));
+  el.classList.add("active"); medFilter = f;
+  renderMeds(filterMeds(document.getElementById("medQ").value.trim().toLowerCase()));
+}
+function runMedSearch() { renderMeds(filterMeds(document.getElementById("medQ").value.trim().toLowerCase())); }
+function filterMeds(q) {
+  return allMedicines.filter(m => {
+    const mq = !q || m.name.toLowerCase().includes(q) || m.brand.toLowerCase().includes(q) || m.salt.toLowerCase().includes(q);
+    const mf = medFilter === "all" || m.tags.includes(medFilter);
+    return mq && mf;
+  });
+}
+function renderMeds(list) {
+  const el = document.getElementById("medResults");
+  if (!list.length) { el.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-muted)"><div style="font-size:2rem;margin-bottom:8px">💊</div><div style="font-weight:700;font-size:.9rem;color:var(--ink);margin-bottom:4px">No medicines found</div><div style="font-size:.8rem">Try searching by salt name or brand name</div></div>`; return; }
+  el.innerHTML = list.map((m, i) => `
+    <div class="med-card">
+      <div class="med-top"><div><div class="med-name">${m.name}</div><div class="med-brand">${m.brand}</div></div><div class="price-tag">₹${m.priceInr}</div></div>
+      <div class="med-comp">Composition: <strong>${m.salt}</strong></div>
+      <div class="mtag-row">
+        ${m.tags.includes("generic")?"<span class='mtag generic'>Generic</span>":""}
+        ${m.tags.includes("ja")?"<span class='mtag ja'>Jan Aushadhi</span>":""}
+        ${m.tags.includes("rx")?"<span class='mtag rx'>Prescription Required</span>":""}
+        ${m.tags.includes("otc")?"<span class='mtag otc'>Over the Counter</span>":""}
+      </div>
+      <button class="alts-btn" onclick="toggleAlts('alt${i}',this)"><span>💰 Cheaper alternatives (${m.alts.length})</span><span id="altArr${i}">↓</span></button>
+      <div class="alts-panel" id="alt${i}"><div class="alts-hd">Same composition — cheaper options</div>${m.alts.map(a=>`<div class="alt-row"><div class="alt-nm">${a.name}</div><div class="alt-r"><div class="alt-p">₹${a.priceInr}</div><div class="save-tag">Save ${a.savingsPct}%</div></div></div>`).join("")}</div>
+    </div>`).join("");
+}
+function toggleAlts(id, btn) {
+  const p = document.getElementById(id);
+  const idx = id.replace("alt",""); const arr = document.getElementById("altArr" + idx);
+  if (p.style.display === "block") { p.style.display = "none"; arr.textContent = "↓"; }
+  else { p.style.display = "block"; arr.textContent = "↑"; }
+}
+
+// ── Hospitals ──────────────────────────────────────────────────
+async function loadHospitals() {
+  const res = await api("/hospitals");
+  allHospitals = res.hospitals || [];
+  renderHosps(allHospitals);
+}
+function setHospFilter(el, f) {
+  document.querySelectorAll(".hosp-toolbar .ftag").forEach(t => t.classList.remove("active"));
+  el.classList.add("active"); hospFilter = f; renderHosps(filterHosps());
+}
+function filterHospByName(q) { hospQuery = q.toLowerCase(); renderHosps(filterHosps()); }
+function filterHosps() {
+  return allHospitals.filter(h => {
+    const mf = hospFilter === "all" ? true : hospFilter === "emergency" ? h.hasEmergency : h.type === hospFilter;
+    const mq = !hospQuery || h.name.toLowerCase().includes(hospQuery) || h.specialties.some(s => s.toLowerCase().includes(hospQuery));
+    return mf && mq;
+  });
+}
+function renderHosps(list) {
+  const el = document.getElementById("hospResults");
+  if (!list.length) { el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--ink-muted)"><div style="font-size:2rem;margin-bottom:8px">🏥</div><div style="font-weight:700;font-size:.9rem;color:var(--ink)">No hospitals found</div></div>`; return; }
+  el.innerHTML = list.map(h => `
+    <div class="hosp-card">
+      <div class="hosp-top"><div><div class="hosp-nm">${h.name}</div><div class="hosp-dist">📍 ${h.distKm} km away${h.beds?" · "+h.beds.toLocaleString()+" beds":""}${h.note?" · "+h.note:""}</div></div><span class="htype ${h.type}">${h.type==="govt"?"Government":h.type==="private"?"Private":"Clinic"}</span></div>
+      <div class="spec-row">${h.specialties.map(s=>`<span class="spec">${s}</span>`).join("")}${h.hasEmergency?'<span class="spec emg">Emergency 24/7</span>':""}</div>
+      <div class="hosp-foot"><div class="rating"><span class="star">★</span> ${h.rating}</div><div class="hosp-btns"><button class="hbtn out" onclick="window.open('https://maps.google.com?q=${encodeURIComponent(h.name+' '+h.address)}','_blank')">📍 Directions</button><button class="hbtn fill" onclick="showView('symptoms');setTimeout(()=>quickSend('I need to visit ${h.name}. What should I prepare?'),250)">Ask AI →</button></div></div>
+    </div>`).join("");
+}
+
+// ── Appointments ───────────────────────────────────────────────
+async function bookAppointment() {
+  const doctorName = document.getElementById("apptDoctor").value.trim();
+  const specialty = document.getElementById("apptSpecialty").value;
+  const appointmentDate = document.getElementById("apptDate").value;
+  const activeSlot = document.querySelector(".tslot.active");
+  const appointmentTime = activeSlot ? activeSlot.textContent.trim() : "14:00";
+  const apptType = document.getElementById("typeInperson").classList.contains("active-sch") ? "inperson" : "video";
+
+  if (!doctorName) return toast("Please enter the doctor's name", "error");
+  if (!appointmentDate) return toast("Please select a date", "error");
+
+  const res = await api("/appointments", {
+    method: "POST",
+    body: JSON.stringify({ doctorName, specialty, appointmentDate, appointmentTime, apptType, fee: 500 }),
+  });
+  if (res.error) return toast("Error: " + res.error, "error");
+  toast(`Appointment confirmed! ${doctorName} · ${appointmentDate} · ${appointmentTime}`, "success");
+  loadAppointments();
+}
+
+async function loadAppointments() {
+  const appts = await api("/appointments?upcomingOnly=true");
+  const el = document.getElementById("apptList");
+  if (!Array.isArray(appts) || !appts.length) {
+    el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--ink-muted);font-size:.84rem;">No upcoming appointments.<br>Book one using the form.</div>';
+    return;
+  }
+  el.innerHTML = appts.map(a => {
+    const d = new Date(a.appointmentDate + "T00:00:00");
+    const day = d.getDate();
+    const mon = d.toLocaleString("default", { month: "short" }).toUpperCase();
+    return `<div class="appt-item">
+      <div class="appt-date-col"><div class="d">${day}</div><div class="m">${mon}</div></div>
+      <div class="appt-info"><h5>${a.doctorName}</h5><p>${a.specialty} · ${a.appointmentTime}</p><span class="appt-tag ${a.apptType==="inperson"?"tag-inperson":"tag-video"}">${a.apptType==="inperson"?"In-Person":"Video Call"}</span></div>
+    </div>`;
+  }).join("");
+}
+
+// ── Ambulance ──────────────────────────────────────────────────
+async function bookAmbulance() {
+  const pickup = document.getElementById("ambPickup").value.trim();
+  const drop   = document.getElementById("ambDrop").value.trim();
+  const phone  = document.getElementById("ambPhone").value.trim();
+  const condition = document.getElementById("ambCondition").value.trim();
+  const ambulanceType = document.getElementById("ambType").value;
+  const bookingType = document.getElementById("ambEmg").style.background.includes("red-pale") ? "emergency" : "scheduled";
+
+  if (!pickup || !drop || !phone) return toast("Please fill in pickup, drop, and contact number", "error");
+
+  const res = await api("/ambulance", {
+    method: "POST",
+    body: JSON.stringify({ bookingType, ambulanceType, pickupAddress: pickup, dropAddress: drop, contactPhone: phone, patientCondition: condition }),
+  });
+  if (res.error) return toast("Error: " + res.error, "error");
+  toast(`Ambulance booked! ETA: ${res.etaMinutes} minutes. For fastest response also call 108 directly.`, "success");
+}
+
+// ── Medical Records ────────────────────────────────────────────
+let pendingFileObj = null;
+
+function handleFileUpload(input) {
+  if (!input.files || !input.files[0]) return;
+  pendingFileObj = input.files[0];
+  document.getElementById("uploadForm").style.display = "";
+  document.getElementById("uploadTitle").value = pendingFileObj.name.replace(/\.[^/.]+$/, "");
+}
+function cancelUpload() {
+  pendingFileObj = null;
+  document.getElementById("fileUploadInput").value = "";
+  document.getElementById("uploadForm").style.display = "none";
+}
+
+async function submitUpload() {
+  if (!pendingFileObj) return;
+  const title = document.getElementById("uploadTitle").value.trim();
+  const category = document.getElementById("uploadCat").value;
+  if (!title) return toast("Please enter a title for this document", "error");
+
+  const form = new FormData();
+  form.append("file", pendingFileObj);
+  form.append("category", category);
+  form.append("title", title);
+  form.append("doctorName", document.getElementById("uploadDoctor").value);
+  form.append("hospitalName", document.getElementById("uploadHospital").value);
+  form.append("recordDate", document.getElementById("uploadDate").value);
+  form.append("notes", document.getElementById("uploadNotes").value);
+
+  const res = await fetch(API + "/records/upload", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${TOKEN}` },
+    body: form,
+  }).then(r => r.json());
+
+  if (res.error) return toast("Upload failed: " + res.error, "error");
+  toast("Document uploaded successfully!", "success");
+  cancelUpload();
+  loadRecords();
+}
+
+async function loadRecords(category = null) {
+  const url = category ? `/records?category=${category}` : "/records";
+  const records = await api(url);
+  updateRecordCounts(Array.isArray(records) ? records : []);
+  renderRecords(Array.isArray(records) ? records : [], category);
+}
+
+function updateRecordCounts(records) {
+  const cats = ["lab","prescription","imaging","vaccination"];
+  cats.forEach(c => {
+    const el = document.getElementById("cnt-" + c);
+    if (el) el.textContent = records.filter(r => r.category === c).length + " files";
+  });
+}
+
+function filterRecords(category) {
+  document.getElementById("recListTitle").textContent = category.charAt(0).toUpperCase() + category.slice(1) + " Records";
+  loadRecords(category);
+}
+
+function renderRecords(records, activeCategory = null) {
+  const el = document.getElementById("recList");
+  if (!records.length) {
+    el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--ink-muted);font-size:.84rem;">No documents uploaded yet.<br>Click above to upload your first document.</div>';
+    return;
+  }
+  const icons = { lab: "🧪", prescription: "📝", imaging: "🩻", vaccination: "💉", other: "📋" };
+  const colors = { lab: "var(--blue-light)", prescription: "var(--green-light)", imaging: "var(--violet-light)", vaccination: "var(--amber-light)", other: "var(--bg-deep)" };
+  el.innerHTML = records.map(r => {
+    const d = new Date(r.createdAt);
+    const dateStr = d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    return `<div class="rec-doc">
+      <div class="doc-icon" style="background:${colors[r.category]}">${icons[r.category] || "📋"}</div>
+      <div class="doc-info"><h5>${r.title}</h5><p>${r.category.charAt(0).toUpperCase() + r.category.slice(1)} · ${r.recordDate || dateStr}</p>${r.doctorName?`<div class="doc-dr">${r.doctorName}${r.hospitalName?" · "+r.hospitalName:""}</div>`:""}</div>
+      <button class="hbtn out" style="font-size:.72rem;padding:5px 10px" onclick="downloadRecord('${r._id}', '${r.fileName}')">⬇️</button>
+      <button class="log-del" onclick="deleteRecord('${r._id}')">✕</button>
+    </div>`;
+  }).join("");
+}
+
+function downloadRecord(id, filename) {
+  const link = document.createElement("a");
+  link.href = API + "/records/" + id + "/download?token=" + TOKEN;
+  link.download = filename;
+  // Use auth header approach via fetch
+  fetch(API + "/records/" + id + "/download", { headers: { Authorization: "Bearer " + TOKEN } })
+    .then(r => r.blob())
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      link.href = url; link.click(); URL.revokeObjectURL(url);
+    });
+}
+
+async function deleteRecord(id) {
+  if (!confirm("Delete this document?")) return;
+  await api("/records/" + id, { method: "DELETE" });
+  toast("Document deleted.");
+  loadRecords();
+}
+
+// ── UI Helpers ─────────────────────────────────────────────────
+function selectSlot(el) { document.querySelectorAll(".tslot").forEach(t => t.classList.remove("active")); el.classList.add("active"); }
+function setApptType(type) {
+  const ip = document.getElementById("typeInperson"), v = document.getElementById("typeVideo");
+  if (type === "inperson") { ip.className = "type-btn active-sch"; v.className = "type-btn"; }
+  else { v.className = "type-btn active-sch"; ip.className = "type-btn"; }
+}
+function setAmbType(type) {
+  const e = document.getElementById("ambEmg"), s = document.getElementById("ambSch");
+  if (type === "emergency") { e.style.cssText = "flex:1;padding:9px;border-radius:var(--radius);font-size:.78rem;font-weight:700;cursor:pointer;border:1.5px solid #FCA5A5;background:var(--red-pale);color:var(--red);transition:all .15s;"; s.className = "type-btn"; }
+  else { s.className = "type-btn active-sch"; e.className = "type-btn"; }
+}
+function toggleCheck(btn) {
+  const done = btn.classList.contains("done");
+  btn.classList.toggle("done"); btn.textContent = done ? "○" : "✓";
+  const tag = btn.closest(".med-item").querySelector(".late-tag");
+  if (tag) { tag.className = "late-tag " + (done ? "lt-due" : "lt-done"); tag.textContent = done ? "Due now" : "✓ Taken"; }
+}
+
+// ── Init ──────────────────────────────────────────────────────
+async function loadInitialData() {
+  await loadHospitals();
+  await loadMedicines();
+}
+
+// Set default date for appointments
+document.getElementById("apptDate").value = new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 10);
+
+// Check if already logged in
+if (TOKEN && USER) {
+  document.getElementById("authOverlay").style.display = "none";
+  document.getElementById("hdrUser").textContent = USER.fullName;
+  document.getElementById("dashName").textContent = USER.fullName.split(" ")[0];
+  loadUserProfile();
+  loadInitialData();
+}
+</script>
+</body>
+</html>
