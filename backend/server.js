@@ -634,7 +634,7 @@ app.delete("/api/records/:id", auth, async (req, res) => {
 });
 
 // ══════════════════════════════════════════
-//  AI CHAT  (OpenRouter — easy to swap)
+//  AI CHAT
 // ══════════════════════════════════════════
 
 // POST /api/chat
@@ -661,7 +661,6 @@ app.post("/api/chat", auth, async (req, res) => {
     }
 
     // ── Call OpenRouter ──────────────────────────────────────────
-    // To switch to Anthropic later, just change the URL, model, and auth header format
     const aiResponse = await axios.post(
       process.env.AI_API_URL || "https://openrouter.ai/api/v1/chat/completions",
       {
@@ -676,7 +675,6 @@ app.post("/api/chat", auth, async (req, res) => {
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          // OpenRouter recommends these headers
           "HTTP-Referer": process.env.SITE_URL || "http://localhost:4000",
           "X-Title": "VaidIQ",
         },
@@ -697,7 +695,31 @@ app.post("/api/chat", auth, async (req, res) => {
     });
 
   } catch (err) {
-    console.error("AI Error:", err.response?.data || err.message);
+    // FIX: log the actual OpenRouter error so you can diagnose the root cause
+    const status = err.response?.status;
+    const detail = err.response?.data;
+    console.error("AI Error status:", status);
+    console.error("AI Error detail:", JSON.stringify(detail, null, 2));
+
+    if (status === 401) {
+      return res.status(502).json({
+        error: "Invalid OpenRouter API key.",
+        reply: "AI service unavailable. For medical emergencies, please call 112 immediately.",
+      });
+    }
+    if (status === 402) {
+      return res.status(502).json({
+        error: "No credits on OpenRouter account.",
+        reply: "AI service unavailable. For medical emergencies, please call 112 immediately.",
+      });
+    }
+    if (status === 429) {
+      return res.status(502).json({
+        error: "OpenRouter rate limit reached.",
+        reply: "Too many requests. Please wait a moment and try again. For emergencies, call 112.",
+      });
+    }
+
     res.status(502).json({
       error: "AI service unavailable. Please try again.",
       reply: "I'm having trouble connecting right now. For medical emergencies, please call 112 immediately.",

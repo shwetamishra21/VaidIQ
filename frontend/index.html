@@ -1043,11 +1043,17 @@ let hospFilter = "all", hospQuery = "";
 let allHospitals = [], allMedicines = [];
 let pendingFile = null;
 
+// FIX: api() now checks response.ok and throws on error responses (4xx/5xx)
+// so callers can catch and handle them properly instead of silently failing
 function api(path, opts = {}) {
   return fetch(API + path, {
     ...opts,
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}`, ...(opts.headers || {}) },
-  }).then(r => r.json());
+  }).then(async r => {
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
+    return data;
+  });
 }
 
 let toastTmr;
@@ -1073,7 +1079,6 @@ function showAuthErr(msg) {
   el.classList.add("show");
 }
 
-// ── FIXED: doLogin with try/catch ──────────────────────────────
 async function doLogin() {
   const phone    = document.getElementById("loginPhone").value.trim();
   const password = document.getElementById("loginPass").value;
@@ -1092,7 +1097,6 @@ async function doLogin() {
   }
 }
 
-// ── FIXED: doRegister with try/catch ──────────────────────────
 async function doRegister() {
   const fullName = document.getElementById("regName").value.trim();
   const phone    = document.getElementById("regPhone").value.trim();
@@ -1261,20 +1265,24 @@ async function doSend() {
   appendMsg("user", txt);
   chatHistory.push({ role: "user", content: txt });
   showTyping();
-  try {
-    const res = await api("/chat", {
-      method: "POST",
-      body: JSON.stringify({ message: txt, sessionId: chatSessionId }),
-    });
-    hideTyping();
-    if (res.error) { appendMsg("ai", "Sorry, I couldn't connect. Please try again. For emergencies, call 112."); return; }
-    chatSessionId = res.sessionId;
-    chatHistory.push({ role: "assistant", content: res.reply });
-    appendMsg("ai", res.reply, res.isEmergency);
-  } catch {
-    hideTyping();
-    appendMsg("ai", "Connection issue. Please check your internet and try again. For emergencies, call 112 immediately.");
+
+  // FIX: use .catch() on the api() call so thrown errors (from non-ok responses)
+  // are caught and surfaced as a friendly message instead of crashing silently
+  const res = await api("/chat", {
+    method: "POST",
+    body: JSON.stringify({ message: txt, sessionId: chatSessionId }),
+  }).catch(err => ({ error: err.message, reply: "Connection error: " + err.message }));
+
+  hideTyping();
+
+  if (res.error && !res.reply) {
+    appendMsg("ai", "Sorry, I couldn't connect. Please try again. For emergencies, call 112.");
+    return;
   }
+
+  if (res.sessionId) chatSessionId = res.sessionId;
+  chatHistory.push({ role: "assistant", content: res.reply });
+  appendMsg("ai", res.reply, res.isEmergency);
 }
 
 function quickSend(txt) { document.getElementById("chatIn").value = txt; doSend(); }
