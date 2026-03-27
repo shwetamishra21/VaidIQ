@@ -1,6 +1,6 @@
+import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import axios from "axios";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
@@ -11,7 +11,6 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 
 dotenv.config();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
