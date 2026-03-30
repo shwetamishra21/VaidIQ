@@ -1,7 +1,6 @@
 # Vaidiq
 
 > AI-powered healthcare assistant built using OpenRouter LLMs, MongoDB Atlas, and a pure HTML/CSS/JS frontend.
-
 ---
 
 ## Table of Contents
