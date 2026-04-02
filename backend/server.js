@@ -694,22 +694,18 @@ app.post("/api/chat", auth, async (req, res) => {
       isEmergency: isEmergency(message) || reply.startsWith("🚨"),
     });
 
-  } catch (err) {
-    // FIX: log the actual OpenRouter error so you can diagnose the root cause
+ } catch (err) {
     const status = err.response?.status;
     const detail = err.response?.data;
     console.error("AI Error status:", status);
     console.error("AI Error detail:", JSON.stringify(detail, null, 2));
 
-    if (status === 401) 
-      {
-  return res.status(502).json({
-    error: "OpenRouter authentication failed (401). Check API key, headers, or account.",
-    details: error?.response?.data || null,
-    reply: "AI service is temporarily unavailable. Please try again later or call 112 in emergencies.",
-  });
-  }
-}
+    if (status === 401) {
+      return res.status(502).json({
+        error: "Invalid OpenRouter API key.",
+        reply: "AI service unavailable. For medical emergencies, please call 112 immediately.",
+      });
+    }
     if (status === 402) {
       return res.status(502).json({
         error: "No credits on OpenRouter account.",
