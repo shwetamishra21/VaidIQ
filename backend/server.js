@@ -13,14 +13,17 @@ import { fileURLToPath } from "url";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
-console.log("KEY:", process.env.OPENROUTER_API_KEY);
+
 const app  = express();
 const PORT = process.env.PORT || 4000;
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
-app.use(cors({ origin: "*" }));          // tighten in production
+app.use(cors({ origin: "*" }));
 app.use(express.json({ limit: "10mb" }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Serve frontend — open http://localhost:4000 in browser after npm start
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 // Ensure uploads directory exists
 if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
@@ -33,7 +36,6 @@ mongoose
 
 // ─── Schemas & Models ─────────────────────────────────────────────────────────
 
-// USER
 const userSchema = new mongoose.Schema({
   fullName:             { type: String, required: true },
   phone:                { type: String, required: true, unique: true },
@@ -50,10 +52,8 @@ const userSchema = new mongoose.Schema({
   emergencyContactPhone:{ type: String, default: "" },
   remindersEnabled:     { type: Boolean, default: true },
 }, { timestamps: true });
-
 const User = mongoose.model("User", userSchema);
 
-// HEALTH LOG
 const healthLogSchema = new mongoose.Schema({
   userId:       { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   bpSystolic:   { type: Number, default: null },
@@ -65,36 +65,30 @@ const healthLogSchema = new mongoose.Schema({
   spo2Percent:  { type: Number, default: null },
   notes:        { type: String, default: "" },
 }, { timestamps: true });
-
 const HealthLog = mongoose.model("HealthLog", healthLogSchema);
 
-// MEDICATION
 const medicationSchema = new mongoose.Schema({
   userId:       { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   name:         { type: String, required: true },
   dosage:       { type: String, required: true },
   frequency:    { type: String, required: true },
-  times:        { type: String, required: true },  // "08:00,20:00"
+  times:        { type: String, required: true },
   instructions: { type: String, default: "" },
   startDate:    { type: String, default: "" },
   endDate:      { type: String, default: "" },
   isActive:     { type: Boolean, default: true },
 }, { timestamps: true });
-
 const Medication = mongoose.model("Medication", medicationSchema);
 
-// MED CHECK (dose taken/missed)
 const medCheckSchema = new mongoose.Schema({
   userId:        { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   medicationId:  { type: mongoose.Schema.Types.ObjectId, ref: "Medication", required: true },
-  scheduledTime: { type: String, required: true },   // ISO string
+  scheduledTime: { type: String, required: true },
   status:        { type: String, enum: ["taken", "missed", "skipped"], default: "taken" },
   notes:         { type: String, default: "" },
 }, { timestamps: true });
-
 const MedCheck = mongoose.model("MedCheck", medCheckSchema);
 
-// APPOINTMENT
 const appointmentSchema = new mongoose.Schema({
   userId:          { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   doctorName:      { type: String, required: true },
@@ -106,10 +100,8 @@ const appointmentSchema = new mongoose.Schema({
   fee:             { type: Number, default: null },
   notes:           { type: String, default: "" },
 }, { timestamps: true });
-
 const Appointment = mongoose.model("Appointment", appointmentSchema);
 
-// AMBULANCE BOOKING
 const ambulanceSchema = new mongoose.Schema({
   userId:           { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   bookingType:      { type: String, enum: ["emergency", "scheduled"], default: "emergency" },
@@ -121,10 +113,8 @@ const ambulanceSchema = new mongoose.Schema({
   status:           { type: String, enum: ["requested","dispatched","arrived","completed","cancelled"], default: "requested" },
   etaMinutes:       { type: Number, default: null },
 }, { timestamps: true });
-
 const Ambulance = mongoose.model("Ambulance", ambulanceSchema);
 
-// MEDICAL RECORD
 const recordSchema = new mongoose.Schema({
   userId:       { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   category:     { type: String, enum: ["lab","prescription","imaging","vaccination","other"], required: true },
@@ -137,15 +127,12 @@ const recordSchema = new mongoose.Schema({
   fileSizeKb:   { type: Number, default: null },
   notes:        { type: String, default: "" },
 }, { timestamps: true });
-
 const MedicalRecord = mongoose.model("MedicalRecord", recordSchema);
 
-// CHAT SESSION
 const chatSessionSchema = new mongoose.Schema({
   userId:   { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  messages: { type: Array, default: [] },   // [{role, content}]
+  messages: { type: Array, default: [] },
 }, { timestamps: true });
-
 const ChatSession = mongoose.model("ChatSession", chatSessionSchema);
 
 // ─── Auth Helpers ─────────────────────────────────────────────────────────────
@@ -156,7 +143,6 @@ function signToken(userId) {
   });
 }
 
-// Middleware: require valid JWT
 function auth(req, res, next) {
   const header = req.headers.authorization;
   if (!header || !header.startsWith("Bearer ")) {
@@ -171,7 +157,7 @@ function auth(req, res, next) {
   }
 }
 
-// ─── Static Data (Phase 1 — no DB needed) ────────────────────────────────────
+// ─── Static Data ──────────────────────────────────────────────────────────────
 
 const HOSPITALS = [
   { id: 1, name: "AIIMS New Delhi",            distKm: 2.3, type: "govt",    specialties: ["Emergency 24/7","Cardiology","Neurology","Oncology","Pediatrics"], rating: 4.6, beds: 2478, hasEmergency: true,  note: "Free OPD · India's premier public hospital",   address: "Ansari Nagar East, New Delhi", phone: "011-26588500" },
@@ -185,21 +171,21 @@ const HOSPITALS = [
 ];
 
 const MEDICINES = [
-  { id: 1,  name: "Paracetamol 500mg",    brand: "Crocin / Dolo",         salt: "Paracetamol IP 500mg",           priceInr: 15, tags: ["otc","generic"],          alts: [{ name:"Calpol 500",priceInr:12,savingsPct:20 },{ name:"Paracetamol (Jan Aushadhi)",priceInr:5,savingsPct:67 }] },
-  { id: 2,  name: "Paracetamol 650mg",    brand: "Dolo 650",               salt: "Paracetamol IP 650mg",           priceInr: 30, tags: ["otc","generic","ja"],      alts: [{ name:"Paracetamol 650 (Jan Aushadhi)",priceInr:10,savingsPct:67 }] },
-  { id: 3,  name: "Metformin 500mg",      brand: "Glycomet / Glucophage",  salt: "Metformin HCl IP 500mg",         priceInr: 28, tags: ["rx","generic","ja"],       alts: [{ name:"Metformin (Jan Aushadhi)",priceInr:12,savingsPct:57 }] },
-  { id: 4,  name: "Amoxicillin 500mg",    brand: "Mox / Amoxil",           salt: "Amoxicillin Trihydrate IP 500mg",priceInr: 65, tags: ["rx","generic","ja"],       alts: [{ name:"Amox-500 Generic",priceInr:40,savingsPct:38 },{ name:"Amoxicillin (Jan Aushadhi)",priceInr:25,savingsPct:62 }] },
-  { id: 5,  name: "Atorvastatin 10mg",    brand: "Atorva / Lipitor",       salt: "Atorvastatin Calcium IP 10mg",   priceInr: 90, tags: ["rx","generic","ja"],       alts: [{ name:"Atorvastatin (Jan Aushadhi)",priceInr:35,savingsPct:61 }] },
-  { id: 6,  name: "Omeprazole 20mg",      brand: "Omez / Prilosec",        salt: "Omeprazole IP 20mg",             priceInr: 42, tags: ["otc","generic"],          alts: [{ name:"Omeprazole Generic",priceInr:18,savingsPct:57 }] },
-  { id: 7,  name: "Cetirizine 10mg",      brand: "Zyrtec / Alerid",        salt: "Cetirizine HCl IP 10mg",         priceInr: 22, tags: ["otc","generic","ja"],      alts: [{ name:"Cetirizine (Jan Aushadhi)",priceInr:7,savingsPct:68 }] },
-  { id: 8,  name: "Azithromycin 500mg",   brand: "Azithral / Zithromax",   salt: "Azithromycin IP 500mg",          priceInr: 85, tags: ["rx","generic"],           alts: [{ name:"Azithromycin Generic",priceInr:45,savingsPct:47 }] },
-  { id: 9,  name: "Ibuprofen 400mg",      brand: "Brufen / Advil",         salt: "Ibuprofen IP 400mg",             priceInr: 18, tags: ["otc","generic"],          alts: [{ name:"Ibuprofen Generic",priceInr:10,savingsPct:44 }] },
-  { id: 10, name: "Amlodipine 5mg",       brand: "Amlodac / Norvasc",      salt: "Amlodipine Besylate IP 5mg",     priceInr: 55, tags: ["rx","generic","ja"],       alts: [{ name:"Amlodipine (Jan Aushadhi)",priceInr:20,savingsPct:64 }] },
-  { id: 11, name: "Pantoprazole 40mg",    brand: "Pan 40 / Pantocid",      salt: "Pantoprazole Sodium IP 40mg",    priceInr: 38, tags: ["rx","generic","ja"],       alts: [{ name:"Pantoprazole (Jan Aushadhi)",priceInr:14,savingsPct:63 }] },
-  { id: 12, name: "Levocetirizine 5mg",   brand: "Xyzal / Levocet",        salt: "Levocetirizine HCl IP 5mg",      priceInr: 26, tags: ["otc","generic","ja"],      alts: [{ name:"Levocetirizine (Jan Aushadhi)",priceInr:8,savingsPct:69 }] },
-  { id: 13, name: "Metronidazole 400mg",  brand: "Flagyl / Metrogyl",      salt: "Metronidazole IP 400mg",         priceInr: 25, tags: ["rx","generic","ja"],       alts: [{ name:"Metronidazole (Jan Aushadhi)",priceInr:9,savingsPct:64 }] },
-  { id: 14, name: "Vitamin D3 60K IU",    brand: "Calcirol / D-Rise",      salt: "Cholecalciferol 60000 IU",       priceInr: 48, tags: ["rx","generic"],           alts: [{ name:"Vitamin D3 60K Generic",priceInr:22,savingsPct:54 }] },
-  { id: 15, name: "Losartan 50mg",        brand: "Losar / Cozaar",         salt: "Losartan Potassium IP 50mg",     priceInr: 70, tags: ["rx","generic","ja"],       alts: [{ name:"Losartan (Jan Aushadhi)",priceInr:28,savingsPct:60 }] },
+  { id: 1,  name: "Paracetamol 500mg",    brand: "Crocin / Dolo",         salt: "Paracetamol IP 500mg",           priceInr: 15, tags: ["otc","generic"],     alts: [{ name:"Calpol 500",priceInr:12,savingsPct:20 },{ name:"Paracetamol (Jan Aushadhi)",priceInr:5,savingsPct:67 }] },
+  { id: 2,  name: "Paracetamol 650mg",    brand: "Dolo 650",               salt: "Paracetamol IP 650mg",           priceInr: 30, tags: ["otc","generic","ja"], alts: [{ name:"Paracetamol 650 (Jan Aushadhi)",priceInr:10,savingsPct:67 }] },
+  { id: 3,  name: "Metformin 500mg",      brand: "Glycomet / Glucophage",  salt: "Metformin HCl IP 500mg",         priceInr: 28, tags: ["rx","generic","ja"],  alts: [{ name:"Metformin (Jan Aushadhi)",priceInr:12,savingsPct:57 }] },
+  { id: 4,  name: "Amoxicillin 500mg",    brand: "Mox / Amoxil",           salt: "Amoxicillin Trihydrate IP 500mg",priceInr: 65, tags: ["rx","generic","ja"],  alts: [{ name:"Amox-500 Generic",priceInr:40,savingsPct:38 },{ name:"Amoxicillin (Jan Aushadhi)",priceInr:25,savingsPct:62 }] },
+  { id: 5,  name: "Atorvastatin 10mg",    brand: "Atorva / Lipitor",       salt: "Atorvastatin Calcium IP 10mg",   priceInr: 90, tags: ["rx","generic","ja"],  alts: [{ name:"Atorvastatin (Jan Aushadhi)",priceInr:35,savingsPct:61 }] },
+  { id: 6,  name: "Omeprazole 20mg",      brand: "Omez / Prilosec",        salt: "Omeprazole IP 20mg",             priceInr: 42, tags: ["otc","generic"],     alts: [{ name:"Omeprazole Generic",priceInr:18,savingsPct:57 }] },
+  { id: 7,  name: "Cetirizine 10mg",      brand: "Zyrtec / Alerid",        salt: "Cetirizine HCl IP 10mg",         priceInr: 22, tags: ["otc","generic","ja"], alts: [{ name:"Cetirizine (Jan Aushadhi)",priceInr:7,savingsPct:68 }] },
+  { id: 8,  name: "Azithromycin 500mg",   brand: "Azithral / Zithromax",   salt: "Azithromycin IP 500mg",          priceInr: 85, tags: ["rx","generic"],      alts: [{ name:"Azithromycin Generic",priceInr:45,savingsPct:47 }] },
+  { id: 9,  name: "Ibuprofen 400mg",      brand: "Brufen / Advil",         salt: "Ibuprofen IP 400mg",             priceInr: 18, tags: ["otc","generic"],     alts: [{ name:"Ibuprofen Generic",priceInr:10,savingsPct:44 }] },
+  { id: 10, name: "Amlodipine 5mg",       brand: "Amlodac / Norvasc",      salt: "Amlodipine Besylate IP 5mg",     priceInr: 55, tags: ["rx","generic","ja"],  alts: [{ name:"Amlodipine (Jan Aushadhi)",priceInr:20,savingsPct:64 }] },
+  { id: 11, name: "Pantoprazole 40mg",    brand: "Pan 40 / Pantocid",      salt: "Pantoprazole Sodium IP 40mg",    priceInr: 38, tags: ["rx","generic","ja"],  alts: [{ name:"Pantoprazole (Jan Aushadhi)",priceInr:14,savingsPct:63 }] },
+  { id: 12, name: "Levocetirizine 5mg",   brand: "Xyzal / Levocet",        salt: "Levocetirizine HCl IP 5mg",      priceInr: 26, tags: ["otc","generic","ja"], alts: [{ name:"Levocetirizine (Jan Aushadhi)",priceInr:8,savingsPct:69 }] },
+  { id: 13, name: "Metronidazole 400mg",  brand: "Flagyl / Metrogyl",      salt: "Metronidazole IP 400mg",         priceInr: 25, tags: ["rx","generic","ja"],  alts: [{ name:"Metronidazole (Jan Aushadhi)",priceInr:9,savingsPct:64 }] },
+  { id: 14, name: "Vitamin D3 60K IU",    brand: "Calcirol / D-Rise",      salt: "Cholecalciferol 60000 IU",       priceInr: 48, tags: ["rx","generic"],      alts: [{ name:"Vitamin D3 60K Generic",priceInr:22,savingsPct:54 }] },
+  { id: 15, name: "Losartan 50mg",        brand: "Losar / Cozaar",         salt: "Losartan Potassium IP 50mg",     priceInr: 70, tags: ["rx","generic","ja"],  alts: [{ name:"Losartan (Jan Aushadhi)",priceInr:28,savingsPct:60 }] },
 ];
 
 // ─── AI System Prompt ─────────────────────────────────────────────────────────
@@ -223,7 +209,6 @@ STRICT RULES — NEVER VIOLATE THESE:
 6. Be warm and reassuring — users may be anxious or in pain.
 7. If a user seems to be in a mental health crisis, gently encourage them to call iCall at 9152987821.`;
 
-// Emergency keyword detection
 const EMERGENCY_KEYWORDS = [
   "chest pain","chest pressure","heart attack","can't breathe","cannot breathe",
   "difficulty breathing","shortness of breath","unconscious","not breathing","stroke",
@@ -252,7 +237,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 },           // 10 MB
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = [".pdf", ".jpg", ".jpeg", ".png", ".webp"];
     const ext = path.extname(file.originalname).toLowerCase();
@@ -265,56 +250,42 @@ const upload = multer({
 //  ROUTES
 // ═══════════════════════════════════════════════════════════════════
 
-// ── Health check ──────────────────────────────────────────────────
 app.get("/api/health", (req, res) => res.json({ ok: true, time: new Date() }));
 
-// ══════════════════════════════════════════
-//  AUTH
-// ══════════════════════════════════════════
+// ── AUTH ──────────────────────────────────────────────────────────
 
-// POST /api/auth/register
 app.post("/api/auth/register", async (req, res) => {
   try {
     const { fullName, phone, password, email, city } = req.body;
-
     if (!fullName || !phone || !password)
       return res.status(400).json({ error: "fullName, phone and password are required." });
     if (password.length < 8)
       return res.status(400).json({ error: "Password must be at least 8 characters." });
-
     const exists = await User.findOne({ phone });
     if (exists) return res.status(409).json({ error: "Phone number already registered." });
-
     const hashed = await bcrypt.hash(password, 10);
     const user = await User.create({ fullName, phone, password: hashed, email: email || "", city: city || "" });
-
     res.status(201).json({ token: signToken(user._id), userId: user._id, fullName: user.fullName });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// POST /api/auth/login
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { phone, password } = req.body;
     const user = await User.findOne({ phone });
     if (!user) return res.status(401).json({ error: "Incorrect phone number or password." });
-
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(401).json({ error: "Incorrect phone number or password." });
-
     res.json({ token: signToken(user._id), userId: user._id, fullName: user.fullName });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ══════════════════════════════════════════
-//  USER PROFILE
-// ══════════════════════════════════════════
+// ── USER PROFILE ──────────────────────────────────────────────────
 
-// GET /api/users/me
 app.get("/api/users/me", auth, async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
@@ -325,14 +296,12 @@ app.get("/api/users/me", auth, async (req, res) => {
   }
 });
 
-// PATCH /api/users/me
 app.patch("/api/users/me", auth, async (req, res) => {
   try {
     const allowed = ["fullName","email","city","age","bloodGroup","heightCm","weightKg",
                      "allergies","medicalHistory","emergencyContactName","emergencyContactPhone","remindersEnabled"];
     const updates = {};
     allowed.forEach(f => { if (req.body[f] !== undefined) updates[f] = req.body[f]; });
-
     const user = await User.findByIdAndUpdate(req.userId, updates, { new: true }).select("-password");
     res.json(user);
   } catch (err) {
@@ -340,11 +309,8 @@ app.patch("/api/users/me", auth, async (req, res) => {
   }
 });
 
-// ══════════════════════════════════════════
-//  HEALTH LOG
-// ══════════════════════════════════════════
+// ── HEALTH LOG ────────────────────────────────────────────────────
 
-// POST /api/health-log
 app.post("/api/health-log", auth, async (req, res) => {
   try {
     const { bpSystolic, bpDiastolic, glucoseMgdl, glucoseType, weightKg, temperatureF, spo2Percent, notes } = req.body;
@@ -352,7 +318,6 @@ app.post("/api/health-log", auth, async (req, res) => {
     if (!hasAny) return res.status(400).json({ error: "Provide at least one reading." });
     if ((bpSystolic == null) !== (bpDiastolic == null))
       return res.status(400).json({ error: "Both systolic and diastolic values are needed together." });
-
     const log = await HealthLog.create({ userId: req.userId, bpSystolic, bpDiastolic, glucoseMgdl, glucoseType, weightKg, temperatureF, spo2Percent, notes });
     res.status(201).json(log);
   } catch (err) {
@@ -360,20 +325,17 @@ app.post("/api/health-log", auth, async (req, res) => {
   }
 });
 
-// GET /api/health-log
 app.get("/api/health-log", auth, async (req, res) => {
   try {
     const limit  = Math.min(parseInt(req.query.limit) || 50, 200);
     const offset = parseInt(req.query.offset) || 0;
-    const logs = await HealthLog.find({ userId: req.userId })
-      .sort({ createdAt: -1 }).skip(offset).limit(limit);
+    const logs = await HealthLog.find({ userId: req.userId }).sort({ createdAt: -1 }).skip(offset).limit(limit);
     res.json(logs);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// DELETE /api/health-log/:id
 app.delete("/api/health-log/:id", auth, async (req, res) => {
   try {
     const log = await HealthLog.findOneAndDelete({ _id: req.params.id, userId: req.userId });
@@ -384,7 +346,6 @@ app.delete("/api/health-log/:id", auth, async (req, res) => {
   }
 });
 
-// DELETE /api/health-log  (clear all)
 app.delete("/api/health-log", auth, async (req, res) => {
   try {
     await HealthLog.deleteMany({ userId: req.userId });
@@ -394,11 +355,8 @@ app.delete("/api/health-log", auth, async (req, res) => {
   }
 });
 
-// ══════════════════════════════════════════
-//  MEDICATIONS
-// ══════════════════════════════════════════
+// ── MEDICATIONS ───────────────────────────────────────────────────
 
-// POST /api/medications
 app.post("/api/medications", auth, async (req, res) => {
   try {
     const { name, dosage, frequency, times, instructions, startDate, endDate } = req.body;
@@ -411,7 +369,6 @@ app.post("/api/medications", auth, async (req, res) => {
   }
 });
 
-// GET /api/medications
 app.get("/api/medications", auth, async (req, res) => {
   try {
     const filter = { userId: req.userId };
@@ -423,7 +380,6 @@ app.get("/api/medications", auth, async (req, res) => {
   }
 });
 
-// PATCH /api/medications/:id
 app.patch("/api/medications/:id", auth, async (req, res) => {
   try {
     const allowed = ["name","dosage","frequency","times","instructions","endDate","isActive"];
@@ -437,7 +393,6 @@ app.patch("/api/medications/:id", auth, async (req, res) => {
   }
 });
 
-// DELETE /api/medications/:id
 app.delete("/api/medications/:id", auth, async (req, res) => {
   try {
     const med = await Medication.findOneAndDelete({ _id: req.params.id, userId: req.userId });
@@ -448,7 +403,6 @@ app.delete("/api/medications/:id", auth, async (req, res) => {
   }
 });
 
-// POST /api/medications/checks  (log a dose taken/missed)
 app.post("/api/medications/checks", auth, async (req, res) => {
   try {
     const { medicationId, scheduledTime, status, notes } = req.body;
@@ -461,7 +415,6 @@ app.post("/api/medications/checks", auth, async (req, res) => {
   }
 });
 
-// GET /api/medications/adherence?days=7
 app.get("/api/medications/adherence", auth, async (req, res) => {
   try {
     const days  = parseInt(req.query.days) || 7;
@@ -475,11 +428,8 @@ app.get("/api/medications/adherence", auth, async (req, res) => {
   }
 });
 
-// ══════════════════════════════════════════
-//  APPOINTMENTS
-// ══════════════════════════════════════════
+// ── APPOINTMENTS ──────────────────────────────────────────────────
 
-// POST /api/appointments
 app.post("/api/appointments", auth, async (req, res) => {
   try {
     const { doctorName, specialty, appointmentDate, appointmentTime, apptType, fee, notes } = req.body;
@@ -492,7 +442,6 @@ app.post("/api/appointments", auth, async (req, res) => {
   }
 });
 
-// GET /api/appointments
 app.get("/api/appointments", auth, async (req, res) => {
   try {
     const filter = { userId: req.userId };
@@ -507,7 +456,6 @@ app.get("/api/appointments", auth, async (req, res) => {
   }
 });
 
-// PATCH /api/appointments/:id
 app.patch("/api/appointments/:id", auth, async (req, res) => {
   try {
     const allowed = ["status","appointmentDate","appointmentTime","notes"];
@@ -521,7 +469,6 @@ app.patch("/api/appointments/:id", auth, async (req, res) => {
   }
 });
 
-// DELETE /api/appointments/:id  (cancel)
 app.delete("/api/appointments/:id", auth, async (req, res) => {
   try {
     const appt = await Appointment.findOneAndUpdate(
@@ -536,21 +483,16 @@ app.delete("/api/appointments/:id", auth, async (req, res) => {
   }
 });
 
-// ══════════════════════════════════════════
-//  AMBULANCE
-// ══════════════════════════════════════════
+// ── AMBULANCE ─────────────────────────────────────────────────────
 
-// POST /api/ambulance
 app.post("/api/ambulance", auth, async (req, res) => {
   try {
     const { bookingType, ambulanceType, pickupAddress, dropAddress, contactPhone, patientCondition } = req.body;
     if (!pickupAddress || !dropAddress || !contactPhone)
       return res.status(400).json({ error: "pickupAddress, dropAddress, and contactPhone are required." });
-
     const eta = bookingType === "emergency"
-      ? Math.floor(Math.random() * 8) + 8    // 8–15 min
-      : Math.floor(Math.random() * 30) + 30; // 30–60 min
-
+      ? Math.floor(Math.random() * 8) + 8
+      : Math.floor(Math.random() * 30) + 30;
     const booking = await Ambulance.create({ userId: req.userId, bookingType, ambulanceType, pickupAddress, dropAddress, contactPhone, patientCondition, etaMinutes: eta });
     res.status(201).json(booking);
   } catch (err) {
@@ -558,7 +500,6 @@ app.post("/api/ambulance", auth, async (req, res) => {
   }
 });
 
-// GET /api/ambulance
 app.get("/api/ambulance", auth, async (req, res) => {
   try {
     const bookings = await Ambulance.find({ userId: req.userId }).sort({ createdAt: -1 }).limit(20);
@@ -568,28 +509,19 @@ app.get("/api/ambulance", auth, async (req, res) => {
   }
 });
 
-// ══════════════════════════════════════════
-//  MEDICAL RECORDS
-// ══════════════════════════════════════════
+// ── MEDICAL RECORDS ───────────────────────────────────────────────
 
-// POST /api/records/upload
 app.post("/api/records/upload", auth, upload.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded." });
     const { category, title, doctorName, hospitalName, recordDate, notes } = req.body;
     if (!category || !title) return res.status(400).json({ error: "category and title are required." });
-
     const record = await MedicalRecord.create({
-      userId:       req.userId,
-      category,
-      title,
-      doctorName:   doctorName   || "",
-      hospitalName: hospitalName || "",
-      recordDate:   recordDate   || "",
-      filePath:     req.file.path,
-      fileName:     req.file.originalname,
-      fileSizeKb:   Math.round(req.file.size / 1024),
-      notes:        notes || "",
+      userId: req.userId, category, title,
+      doctorName: doctorName || "", hospitalName: hospitalName || "",
+      recordDate: recordDate || "", filePath: req.file.path,
+      fileName: req.file.originalname, fileSizeKb: Math.round(req.file.size / 1024),
+      notes: notes || "",
     });
     res.status(201).json(record);
   } catch (err) {
@@ -597,7 +529,6 @@ app.post("/api/records/upload", auth, upload.single("file"), async (req, res) =>
   }
 });
 
-// GET /api/records
 app.get("/api/records", auth, async (req, res) => {
   try {
     const filter = { userId: req.userId };
@@ -609,7 +540,6 @@ app.get("/api/records", auth, async (req, res) => {
   }
 });
 
-// GET /api/records/:id/download
 app.get("/api/records/:id/download", auth, async (req, res) => {
   try {
     const record = await MedicalRecord.findOne({ _id: req.params.id, userId: req.userId });
@@ -621,7 +551,6 @@ app.get("/api/records/:id/download", auth, async (req, res) => {
   }
 });
 
-// DELETE /api/records/:id
 app.delete("/api/records/:id", auth, async (req, res) => {
   try {
     const record = await MedicalRecord.findOneAndDelete({ _id: req.params.id, userId: req.userId });
@@ -633,17 +562,13 @@ app.delete("/api/records/:id", auth, async (req, res) => {
   }
 });
 
-// ══════════════════════════════════════════
-//  AI CHAT
-// ══════════════════════════════════════════
+// ── AI CHAT ───────────────────────────────────────────────────────
 
-// POST /api/chat
 app.post("/api/chat", auth, async (req, res) => {
   try {
     const { message, sessionId } = req.body;
     if (!message) return res.status(400).json({ error: "message is required." });
 
-    // Load or create session
     let session;
     if (sessionId) {
       session = await ChatSession.findOne({ _id: sessionId, userId: req.userId });
@@ -652,15 +577,11 @@ app.post("/api/chat", auth, async (req, res) => {
       session = new ChatSession({ userId: req.userId, messages: [] });
     }
 
-    // Append user message
     session.messages.push({ role: "user", content: message });
-
-    // Keep last 40 messages (20 turns) to avoid token bloat
     if (session.messages.length > 40) {
       session.messages = session.messages.slice(-40);
     }
 
-    // ── Call OpenRouter ──────────────────────────────────────────
     const aiResponse = await axios.post(
       process.env.AI_API_URL || "https://openrouter.ai/api/v1/chat/completions",
       {
@@ -683,8 +604,6 @@ app.post("/api/chat", auth, async (req, res) => {
     );
 
     const reply = aiResponse.data.choices[0].message.content;
-
-    // Append assistant reply
     session.messages.push({ role: "assistant", content: reply });
     await session.save();
 
@@ -694,7 +613,7 @@ app.post("/api/chat", auth, async (req, res) => {
       isEmergency: isEmergency(message) || reply.startsWith("🚨"),
     });
 
- } catch (err) {
+  } catch (err) {
     const status = err.response?.status;
     const detail = err.response?.data;
     console.error("AI Error status:", status);
@@ -726,7 +645,6 @@ app.post("/api/chat", auth, async (req, res) => {
   }
 });
 
-// GET /api/chat/sessions  — list past sessions
 app.get("/api/chat/sessions", auth, async (req, res) => {
   try {
     const sessions = await ChatSession.find({ userId: req.userId })
@@ -743,7 +661,6 @@ app.get("/api/chat/sessions", auth, async (req, res) => {
   }
 });
 
-// DELETE /api/chat/sessions/:id
 app.delete("/api/chat/sessions/:id", auth, async (req, res) => {
   try {
     await ChatSession.findOneAndDelete({ _id: req.params.id, userId: req.userId });
@@ -753,11 +670,8 @@ app.delete("/api/chat/sessions/:id", auth, async (req, res) => {
   }
 });
 
-// ══════════════════════════════════════════
-//  STATIC CATALOG  (Hospitals + Medicines)
-// ══════════════════════════════════════════
+// ── STATIC CATALOG ────────────────────────────────────────────────
 
-// GET /api/hospitals?q=&type=&emergency=
 app.get("/api/hospitals", (req, res) => {
   let results = HOSPITALS;
   if (req.query.q) {
@@ -767,19 +681,17 @@ app.get("/api/hospitals", (req, res) => {
       h.specialties.some(s => s.toLowerCase().includes(q))
     );
   }
-  if (req.query.type)      results = results.filter(h => h.type === req.query.type);
-  if (req.query.emergency === "true")  results = results.filter(h => h.hasEmergency);
+  if (req.query.type) results = results.filter(h => h.type === req.query.type);
+  if (req.query.emergency === "true") results = results.filter(h => h.hasEmergency);
   res.json({ total: results.length, hospitals: results });
 });
 
-// GET /api/hospitals/:id
 app.get("/api/hospitals/:id", (req, res) => {
   const h = HOSPITALS.find(h => h.id === parseInt(req.params.id));
   if (!h) return res.status(404).json({ error: "Hospital not found." });
   res.json(h);
 });
 
-// GET /api/medicines?q=&tag=
 app.get("/api/medicines", (req, res) => {
   let results = MEDICINES;
   if (req.query.q) {
@@ -790,13 +702,10 @@ app.get("/api/medicines", (req, res) => {
       m.salt.toLowerCase().includes(q)
     );
   }
-  if (req.query.tag) {
-    results = results.filter(m => m.tags.includes(req.query.tag));
-  }
+  if (req.query.tag) results = results.filter(m => m.tags.includes(req.query.tag));
   res.json({ total: results.length, medicines: results });
 });
 
-// GET /api/medicines/:id
 app.get("/api/medicines/:id", (req, res) => {
   const m = MEDICINES.find(m => m.id === parseInt(req.params.id));
   if (!m) return res.status(404).json({ error: "Medicine not found." });
@@ -813,5 +722,5 @@ app.use((err, req, res, next) => {
 // ─── Start ────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`🚀 VaidIQ backend running on http://localhost:${PORT}`);
-  console.log(`📖 API docs: http://localhost:${PORT}/api/health`);
+  console.log(`🌐 Open the app at: http://localhost:${PORT}`);
 });
