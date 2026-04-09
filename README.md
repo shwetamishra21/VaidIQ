@@ -1,269 +1,228 @@
-# Vaidiq
+# 🏥 VaidIQ — AI Health Companion (India-Focused)
 
-> AI-powered healthcare assistant built using OpenRouter LLMs, MongoDB Atlas, and a pure HTML/CSS/JS frontend.
----
-## Table of Contents
+## 🚀 Overview
 
-- [Overview](#overview)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [API Reference](#api-reference)
-- [Database Schema](#database-schema)
-- [Frontend Architecture](#frontend-architecture)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
+VaidIQ is an **AI-powered medical assistance platform** designed for the Indian healthcare ecosystem.
+It provides **symptom-based guidance, emergency detection, and medicine assistance** using a combination of:
 
----
+* Large Language Models (LLM)
+* Retrieval-Augmented Generation (RAG)
+* Rule-based safety systems
 
-## Overview
+The system acts as a **first-level triage assistant**, helping users decide:
 
-Vaidiq is an intelligent web platform that leverages the power of OpenAI's large language models to deliver smart, context-aware experiences. The backend is powered by MongoDB for flexible, document-based storage, while the frontend is built with vanilla HTML, CSS, and JavaScript for maximum performance and portability.
+* 🚨 Emergency (call 112)
+* 🏥 Doctor consultation
+* 💊 Medicine-related guidance
 
 ---
 
-## Tech Stack
+## ⚙️ Current Tech Stack (ACTUAL IMPLEMENTATION)
 
-| Layer      | Technology                          |
-|------------|-------------------------------------|
-| AI / LLM   | OpenRouter (gpt-4o-mini)            |
-| Database   | MongoDB (via Mongoose)              |
-| Backend    | Node.js + Express                   |
-| Frontend   | HTML5 · CSS3 · Vanilla JavaScript   |
-| Auth       | JWT + bcrypt                        |
-| Hosting    | (Your cloud provider here)          |
+### Backend
+
+* Node.js + Express
+* MongoDB (user data, sessions, logs)
+* Groq API (LLM inference)
+* Custom RAG engine (TF-IDF based)
+
+### Frontend
+
+* HTML + CSS + Vanilla JS
+* API-driven UI (localhost-based)
+
+### AI Layer
+
+* Groq LLM (`llama-3.1-8b-instant`)
+* RAG (local knowledge base)
+* Emergency rule engine
 
 ---
 
-## Project Structure
+## 🧠 Core Features (WORKING)
+
+### 1. 🤖 AI Symptom Checker (RAG + LLM)
+
+* Accepts user symptoms
+* Retrieves relevant medical knowledge (RAG)
+* Combines with LLM reasoning
+* Produces structured, safe responses
+
+---
+
+### 2. 🚨 Emergency Detection (Deterministic)
+
+* Keyword + logic-based detection
+* Overrides LLM if high-risk detected
+* Example:
+
+  * Chest pain + breathlessness → 🚨 call 112
+
+---
+
+### 3. 🧾 RAG Pipeline (Node.js Only)
+
+* Local medical dataset (`symptoms.json`, etc.)
+* TF-IDF vector search
+* Top-K context injection into LLM prompt
+
+---
+
+### 4. 👤 User Context Integration
+
+* Recent health logs
+* Active medications
+* Chat history
+
+Merged into system prompt for **personalized responses**
+
+---
+
+### 5. 💬 Conversational AI Chat
+
+* Groq-powered responses
+* Context-aware replies
+* Emergency-safe output
+
+---
+
+## ⚠️ Features Removed / Not Included (By Design)
+
+To maintain reliability, the following were **removed or deferred**:
+
+* ❌ Hospital discovery (placeholder removed)
+* ❌ Appointment booking (not functional)
+* ❌ Fake/partial integrations
+
+👉 Only **fully working features are retained**
+
+---
+
+## 🧪 RAG Example (Working)
+
+Query:
 
 ```
-vaidiq/
-├── index.html                # Main entry point (frontend)
-├── css/
-│   └── styles.css            # Global stylesheet
-├── js/
-│   └── main.js               # App logic & API calls
-│
-├── backend/
-│   ├── server.js             # Express app + all routes
-│   ├── models/               # Mongoose schemas
-│   │   ├── User.js
-│   │   └── Conversation.js
-│   └── uploads/              # File upload storage
-│
-├── .env.example
-├── package.json
-└── README.md
+I have chest pain and shortness of breath
+```
+
+Retrieved Context:
+
+* Emergency chest pain protocol
+* Breathlessness handling
+* BP-related risk factors
+
+→ Passed into LLM → Generates safe response
+
+---
+
+## 📂 Project Structure
+
+```
+backend/
+  rag/
+    ragEngine.js
+    contextBuilder.js
+  knowledge/
+    symptoms.json
+    drugs.json
+  server.js
+  package.json
+
+frontend/
+  index.html
+
+.env (not committed)
+.gitignore
 ```
 
 ---
 
-## Getting Started
+## 🔑 Environment Variables
 
-### Prerequisites
+Create `backend/.env`:
 
-- Node.js v18+
-- MongoDB (local or Atlas URI)
-- OpenAI API key
+```
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_secret
 
-### Installation
+GROQ_API_KEY=your_key
+GROQ_MODEL=llama-3.1-8b-instant
+AI_API_URL=https://api.groq.com/openai/v1/chat/completions
+```
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/your-org/vaidiq.git
-cd vaidiq
+---
 
-# 2. Install dependencies
+## ▶️ How to Run
+
+### Backend
+
+```
+cd backend
 npm install
-
-# 3. Copy the environment template and fill in your values
-cp .env.example .env
-
-# 4. Start the development server
 npm run dev
 ```
 
-The backend will be available at `http://localhost:4000`.
+Runs at:
 
----
-
-## Environment Variables
-
-Create a `.env` file in the root directory based on `.env.example`:
-
-```env
-# Server
-PORT=4000
-NODE_ENV=development
-
-# MongoDB
-MONGO_URI=mongodb+srv://<user>:<password>@cluster0.mongodb.net/vaidiq
-
-# OpenRouter
-OPENROUTER_API_KEY=your_api_key_here
-
-# Auth
-JWT_SECRET=your_jwt_secret_here
-JWT_EXPIRES_IN=7d
 ```
-
-> **Never commit your `.env` file.** It is listed in `.gitignore` by default.
-
----
-
-## API Reference
-
-All API endpoints are prefixed with `/api`.
-
-### Authentication
-
-| Method | Endpoint             | Description          |
-|--------|----------------------|----------------------|
-| POST   | `/api/auth/register` | Register a new user  |
-| POST   | `/api/auth/login`    | Login and get a JWT  |
-
-### Chat (LLM)
-
-| Method | Endpoint                    | Description                          |
-|--------|-----------------------------|--------------------------------------|
-| POST   | `/api/chat`                 | Send a message, receive LLM response |
-| GET    | `/api/chat/history`         | Fetch past conversations             |
-| DELETE | `/api/chat/:conversationId` | Delete a conversation                |
-
-#### Example — POST `/api/chat`
-
-**Request body:**
-```json
-{
-  "message": "Explain quantum entanglement in simple terms.",
-  "conversationId": "optional-existing-id"
-}
-```
-
-**Response:**
-```json
-{
-  "reply": "Quantum entanglement is...",
-  "conversationId": "64f3a..."
-}
-```
-
-### Users
-
-| Method | Endpoint           | Description               |
-|--------|--------------------|---------------------------|
-| GET    | `/api/user/me`     | Get current user profile  |
-| PATCH  | `/api/user/me`     | Update profile settings   |
-
----
-
-## Database Schema
-
-### `users` collection
-
-```js
-{
-  _id: ObjectId,
-  name: String,
-  email: { type: String, unique: true },
-  passwordHash: String,
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
-### `conversations` collection
-
-```js
-{
-  _id: ObjectId,
-  userId: ObjectId,           // ref: users
-  title: String,
-  messages: [
-    {
-      role: String,           // "user" | "assistant" | "system"
-      content: String,
-      timestamp: Date
-    }
-  ],
-  createdAt: Date,
-  updatedAt: Date
-}
+http://localhost:4000
 ```
 
 ---
 
-## Frontend Architecture
+### Frontend
 
-The frontend is built with plain HTML, CSS, and JavaScript — no build step required.
+Open:
 
-- **`index.html`** — Main entry point at the repo root; all views are rendered dynamically via JS.
-- **`js/main.js`** — Handles routing, DOM updates, and `fetch()` calls to the backend API.
-- **`css/styles.css`** — Styling using CSS custom properties for theming.
-
-In development, open `index.html` directly in your browser or serve it via a simple static server:
-
-```bash
-npx serve .
 ```
-
-The frontend talks to the backend at `http://localhost:4000`.
+frontend/index.html
+```
 
 ---
 
-## Deployment
+## 🔐 Safety Design
 
-### Option A — Traditional VPS (e.g. EC2, DigitalOcean)
-
-```bash
-# Build and start with PM2
-npm install -g pm2
-pm2 start backend/server.js --name vaidiq
-pm2 save
-```
-
-### Option B — Docker
-
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --production
-COPY . .
-EXPOSE 4000
-CMD ["node", "backend/server.js"]
-```
-
-```bash
-docker build -t vaidiq .
-docker run -p 4000:4000 --env-file .env vaidiq
-```
-
-### Option C — Railway / Render / Fly.io
-
-Connect your GitHub repository, set environment variables in the dashboard, and deploy. These platforms auto-detect Node.js projects.
+* No diagnosis claims
+* No prescriptions
+* Emergency override system
+* LLM constrained via system prompts
+* RAG grounding reduces hallucination
 
 ---
 
-## Contributing
+## 📉 Limitations (Honest)
 
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes: `git commit -m "feat: add your feature"`
-4. Push to the branch: `git push origin feature/your-feature-name`
-5. Open a pull request.
-
-Please follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
+* Medicine search is static (no AI integration yet)
+* No real hospital/ambulance APIs
+* RAG uses TF-IDF (not embeddings yet)
+* Frontend is basic (no framework)
 
 ---
 
-## License
+## 🚀 Future Scope
 
-Distributed under the MIT License. See `LICENSE` for more information.
+* 🔄 Vector DB (Pinecone / Chroma)
+* 🧠 Embeddings (SBERT)
+* 💊 AI-powered medicine recommendations
+* 📱 Mobile + voice interface
+* 🚑 Real ambulance integration
 
 ---
 
-*Built with care by the Vaidiq team.*
+## ⚠️ Disclaimer
+
+This system is for **assistance only**.
+It does NOT replace doctors or emergency services.
+
+---
+
+## 📌 Status
+
+✅ Core AI + RAG working
+✅ Emergency detection working
+✅ Backend stable
+⚠️ UI + medicine system partially implemented
+🚧 Under active development
+
+---
