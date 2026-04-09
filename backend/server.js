@@ -17,8 +17,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
 const app  = express();
-const PORT = 4000;
-
+const API = window.location.hostname === "localhost"
+  ? "http://localhost:4000/api"
+  : "/api";
 // ─── Groq Client ──────────────────────────────────────────────────────────────
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
