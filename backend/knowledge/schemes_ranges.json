@@ -1,0 +1,47 @@
+[
+  {
+    "id": "scheme_ayushman",
+    "text": "Ayushman Bharat PM-JAY: Government health insurance for poor and vulnerable families. Covers up to ₹5 lakh per family per year for secondary and tertiary hospitalization. Eligibility: families in SECC database. Apply at Common Service Centre or pmjay.gov.in. Cashless treatment at empanelled hospitals.",
+    "tags": ["Ayushman Bharat", "health insurance", "government", "free treatment", "PMJAY"]
+  },
+  {
+    "id": "scheme_jan_aushadhi",
+    "text": "Jan Aushadhi Scheme: Government-run stores selling generic medicines at 50-90% lower cost than branded drugs. Over 10,000 stores across India. Find nearest store at janaushadhi.gov.in or call 1800-180-8080. Same quality as branded medicines — manufactured at WHO-GMP certified facilities.",
+    "tags": ["Jan Aushadhi", "generic medicines", "affordable", "government", "cheap medicines"]
+  },
+  {
+    "id": "scheme_108_ambulance",
+    "text": "108 Emergency Ambulance Service: Free government ambulance across most Indian states. Call 108 for medical emergencies. Reaches in 8-15 minutes in urban areas. Equipped with basic life support. For advanced emergencies also call 112. Always call directly for fastest response.",
+    "tags": ["108", "ambulance", "emergency", "free", "government ambulance"]
+  },
+  {
+    "id": "scheme_aiims",
+    "text": "AIIMS (All India Institute of Medical Sciences): Premier government hospitals with free OPD. New Delhi, Bhopal, Bhubaneswar, Jodhpur, Patna, Raipur, Rishikesh, and more. OPD registration online at aiimsdelhi.edu.in. For poor patients, all government hospital treatments are heavily subsidized or free.",
+    "tags": ["AIIMS", "government hospital", "free treatment", "OPD", "Delhi"]
+  },
+  {
+    "id": "scheme_esic",
+    "text": "ESIC (Employees State Insurance Corporation): Free healthcare for salaried employees earning below ₹21,000/month. Covers employee and family. Access ESIC hospitals and dispensaries. Apply through employer. Benefits include hospitalization, medicines, and specialist care.",
+    "tags": ["ESIC", "employee insurance", "free healthcare", "salaried", "government"]
+  },
+  {
+    "id": "normal_bp",
+    "text": "Normal Blood Pressure ranges: Normal: below 120/80 mmHg. Elevated: 120-129 systolic with below 80 diastolic. Stage 1 Hypertension: 130-139/80-89. Stage 2 Hypertension: 140/90 or higher. Hypertensive Crisis (emergency): above 180/120. Hypotension (low BP): below 90/60.",
+    "tags": ["blood pressure", "BP", "normal range", "hypertension", "hypotension"]
+  },
+  {
+    "id": "normal_glucose",
+    "text": "Normal Blood Glucose ranges: Fasting normal: 70-99 mg/dL. Fasting prediabetes: 100-125 mg/dL. Fasting diabetes: 126 mg/dL or above. Post-meal (2 hours) normal: below 140. Post-meal prediabetes: 140-199. Post-meal diabetes: 200 or above. Random glucose above 200 with symptoms confirms diabetes.",
+    "tags": ["blood sugar", "glucose", "diabetes", "normal range", "fasting", "HbA1c"]
+  },
+  {
+    "id": "normal_spo2",
+    "text": "Normal SpO2 (oxygen saturation) ranges: Normal: 95-100%. Mild concern: 91-94% — see doctor. Moderate concern: 86-90% — go to emergency. Severe (emergency): below 85% — call 112 immediately. COPD patients may normally have 88-92% — consult your doctor for your personal target.",
+    "tags": ["spo2", "oxygen saturation", "normal range", "COPD"]
+  },
+  {
+    "id": "normal_temperature",
+    "text": "Normal body temperature: 97-99°F (36.1-37.2°C). Low-grade fever: 99-100.4°F. Fever: above 100.4°F (38°C). High fever: above 103°F (39.4°C) — see doctor. Axillary (armpit) reading is 0.5-1°F lower than oral. Rectal reading is most accurate for infants.",
+    "tags": ["temperature", "fever", "normal range", "thermometer"]
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "drug_paracetamol",
+    "text": "Paracetamol (Crocin, Dolo 650): used for fever and mild pain. Dose: 500mg-1g every 4-6 hours, max 4g/day. Safe in pregnancy. Jan Aushadhi price: ₹5 for 10 tablets. Do not exceed recommended dose — liver damage risk. Avoid alcohol.",
+    "tags": ["paracetamol", "fever", "pain relief", "OTC", "Jan Aushadhi"]
+  },
+  {
+    "id": "drug_metformin",
+    "text": "Metformin (Glycomet, Glucophage): first-line drug for Type 2 diabetes. Take with or after meals to reduce nausea. Common side effects: stomach upset, nausea (usually settles). Hold before contrast procedures. Jan Aushadhi price: ₹12 for 10 tablets vs ₹28 branded.",
+    "tags": ["metformin", "diabetes", "blood sugar", "Jan Aushadhi"]
+  },
+  {
+    "id": "drug_atorvastatin",
+    "text": "Atorvastatin (Atorva, Lipitor): for high cholesterol and heart disease prevention. Take at night. May cause muscle pain (myopathy) — report immediately. Avoid grapefruit juice. Regular LFT monitoring advised. Jan Aushadhi price: ₹35 vs ₹90 branded.",
+    "tags": ["atorvastatin", "cholesterol", "heart disease", "statin", "Jan Aushadhi"]
+  },
+  {
+    "id": "drug_amlodipine",
+    "text": "Amlodipine (Amlodac, Norvasc): calcium channel blocker for hypertension and angina. Take once daily. Common side effects: ankle swelling, flushing. Do not stop suddenly. Jan Aushadhi price: ₹20 vs ₹55 branded.",
+    "tags": ["amlodipine", "hypertension", "blood pressure", "BP", "Jan Aushadhi"]
+  },
+  {
+    "id": "drug_losartan",
+    "text": "Losartan (Losar, Cozaar): ARB for hypertension and diabetic kidney protection. Once daily with or without food. May cause dizziness on standing. Avoid potassium supplements. Do not use in pregnancy. Jan Aushadhi price: ₹28 vs ₹70 branded.",
+    "tags": ["losartan", "hypertension", "blood pressure", "diabetes", "kidney", "Jan Aushadhi"]
+  },
+  {
+    "id": "drug_omeprazole",
+    "text": "Omeprazole (Omez): proton pump inhibitor for acidity, GERD, and stomach ulcers. Take 30 minutes before breakfast. Not for immediate relief — use antacid for that. Long-term use may reduce B12 and magnesium. Generic price: ₹18 vs ₹42 branded.",
+    "tags": ["omeprazole", "acidity", "GERD", "ulcer", "PPI"]
+  },
+  {
+    "id": "drug_azithromycin",
+    "text": "Azithromycin (Azithral, Z-pack): antibiotic for respiratory infections, typhoid, STIs. Take on empty stomach. Complete full course. Not for viral infections like common cold. May cause diarrhea. Generic price: ₹45 vs ₹85 branded.",
+    "tags": ["azithromycin", "antibiotic", "infection", "typhoid", "respiratory"]
+  },
+  {
+    "id": "drug_amoxicillin",
+    "text": "Amoxicillin (Mox, Amoxil): penicillin antibiotic for bacterial infections. Always complete full course even if feeling better. Check for penicillin allergy before use. Take with food. Jan Aushadhi price: ₹25 vs ₹65 branded.",
+    "tags": ["amoxicillin", "antibiotic", "infection", "penicillin", "Jan Aushadhi"]
+  },
+  {
+    "id": "drug_cetirizine",
+    "text": "Cetirizine (Zyrtec, Alerid): antihistamine for allergies, hives, runny nose. Take at night — causes drowsiness. Do not drive after taking. Safe for adults and children above 6. Jan Aushadhi price: ₹7 vs ₹22 branded.",
+    "tags": ["cetirizine", "allergy", "antihistamine", "runny nose", "Jan Aushadhi"]
+  },
+  {
+    "id": "drug_vitamin_d",
+    "text": "Vitamin D3 (Calcirol, D-Rise 60K): used for Vitamin D deficiency common in India due to limited sunlight exposure. Weekly dose of 60,000 IU for 8-12 weeks for deficiency. Take with fatty meal for better absorption. Generic price: ₹22 vs ₹48 branded.",
+    "tags": ["vitamin D", "Vitamin D3", "deficiency", "bone health", "calcium"]
+  },
+  {
+    "id": "drug_insulin",
+    "text": "Insulin (various types): for Type 1 diabetes and advanced Type 2. Must be refrigerated (2-8°C). Inject subcutaneously. Rotate injection sites. Never share needles. Carry glucometer and fast sugar always. Free at government hospitals under National Diabetes Programme.",
+    "tags": ["insulin", "diabetes", "injection", "type 1 diabetes"]
+  },
+  {
+    "id": "drug_interactions",
+    "text": "Important drug interactions to avoid: Warfarin + Aspirin (bleeding risk), Metformin + Alcohol (lactic acidosis), Statins + Grapefruit juice (toxicity), ACE inhibitors + Potassium supplements (hyperkalemia), Ciprofloxacin + Antacids (reduced absorption — take 2 hours apart).",
+    "tags": ["drug interactions", "warfarin", "metformin", "statins", "safety"]
+  }
+]

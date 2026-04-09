@@ -10,6 +10,7 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import Groq from "groq-sdk";
+import { buildSystemPrompt, isEmergency } from "./rag/contextBuilder.js";
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
@@ -192,38 +193,7 @@ const MEDICINES = [
   { id: 15, name: "Losartan 50mg",        brand: "Losar / Cozaar",         salt: "Losartan Potassium IP 50mg",     priceInr: 70, tags: ["rx","generic","ja"],  alts: [{ name:"Losartan (Jan Aushadhi)",priceInr:28,savingsPct:60 }] },
 ];
 
-// ─── AI System Prompt ─────────────────────────────────────────────────────────
 
-const AI_SYSTEM_PROMPT = `You are VaidIQ — an AI Health Assistant for India, powered by an advanced language model.
-
-YOUR ROLE:
-- Help users understand symptoms and what kind of care they might need
-- Be empathetic, warm, and use simple language accessible to all Indians
-- Suggest appropriate self-care, doctor visit, or emergency action
-- Mention Jan Aushadhi and generic medicines when cost is a concern
-- Reference 112/108 for emergencies, government hospitals (AIIMS, Safdarjung, RML etc.) for free care
-- You can respond in Hindi if the user writes in Hindi
-
-STRICT RULES — NEVER VIOLATE THESE:
-1. NEVER diagnose a condition. Say "this could be..." or "these symptoms are sometimes associated with..."
-2. NEVER prescribe medication or specify doses
-3. For chest pain, difficulty breathing, severe bleeding, or loss of consciousness — begin your reply IMMEDIATELY with "🚨 EMERGENCY: Please call 112 immediately."
-4. Keep responses to 2–4 short paragraphs. No walls of text.
-5. End EVERY response with: "⚠️ This is general guidance — please consult a licensed doctor for proper diagnosis and treatment."
-6. Be warm and reassuring — users may be anxious or in pain.
-7. If a user seems to be in a mental health crisis, gently encourage them to call iCall at 9152987821.`;
-
-const EMERGENCY_KEYWORDS = [
-  "chest pain","chest pressure","heart attack","can't breathe","cannot breathe",
-  "difficulty breathing","shortness of breath","unconscious","not breathing","stroke",
-  "severe bleeding","loss of consciousness","fainted","overdose","poisoning",
-  "anaphylaxis","seizure","convulsion","paralysis",
-];
-
-function isEmergency(text) {
-  const lower = text.toLowerCase();
-  return EMERGENCY_KEYWORDS.some(k => lower.includes(k));
-}
 
 // ─── File Upload Config ───────────────────────────────────────────────────────
 
@@ -573,6 +543,7 @@ app.post("/api/chat", auth, async (req, res) => {
     const { message, sessionId } = req.body;
     if (!message) return res.status(400).json({ error: "message is required." });
 
+    // ── 1. Load or create chat session ──────────────────────────────────────
     let session;
     if (sessionId) {
       session = await ChatSession.findOne({ _id: sessionId, userId: req.userId });
@@ -581,55 +552,85 @@ app.post("/api/chat", auth, async (req, res) => {
       session = new ChatSession({ userId: req.userId, messages: [] });
     }
 
+    // ── 2. Fetch user context for personalization ────────────────────────────
+    // All done in parallel — no sequential DB waterfall
+    const [user, recentLogs, activeMeds] = await Promise.all([
+      User.findById(req.userId).select("-password"),
+      HealthLog.find({ userId: req.userId }).sort({ createdAt: -1 }).limit(3),
+      Medication.find({ userId: req.userId, isActive: true }).limit(10),
+    ]);
+
+    // ── 3. Build RAG-enhanced system prompt ──────────────────────────────────
+    // This is the core upgrade: RAG retrieval + user profile merged together
+    const { systemPrompt, sources, isEmergencyMsg, doctor, riskProfile } = buildSystemPrompt({
+      message,
+      user,
+      recentLogs,
+      activeMeds,
+    });
+
+    // ── 4. Maintain rolling context window (last 40 messages) ───────────────
     session.messages.push({ role: "user", content: message });
     if (session.messages.length > 40) {
       session.messages = session.messages.slice(-40);
     }
 
+    // ── 5. Call Groq LLM ─────────────────────────────────────────────────────
     const aiResponse = await groq.chat.completions.create({
-      model: process.env.GROQ_MODEL || "llama3-8b-8192",
+      model: process.env.GROQ_MODEL || "llama-3.1-8b-instant",   // updated model
       messages: [
-        { role: "system", content: AI_SYSTEM_PROMPT },
+        { role: "system", content: systemPrompt },
         ...session.messages,
       ],
-      temperature: 0.7,
-      max_tokens: 1000,
+      temperature: isEmergencyMsg ? 0.3 : 0.7,   // lower temp for emergencies
+      max_tokens: 800,
     });
 
     const reply = aiResponse.choices[0].message.content;
+
+    // ── 6. Save session ──────────────────────────────────────────────────────
     session.messages.push({ role: "assistant", content: reply });
     await session.save();
 
+    // ── 7. Respond ───────────────────────────────────────────────────────────
     res.json({
-      reply,
-      sessionId: session._id,
-      isEmergency: isEmergency(message) || reply.startsWith("🚨"),
-    });
+  reply,
+  sessionId: session._id,
+  isEmergency: isEmergencyMsg || reply.startsWith("🚨"),
+  doctor,
+  riskProfile,
+  sources: process.env.NODE_ENV === "development" ? sources : undefined
+});
 
   } catch (err) {
-    console.error("Groq AI Error:", err.message);
+    console.error("Chat error:", err.message);
 
     const status = err.status || err.response?.status;
 
+    // ── Graceful fallbacks ───────────────────────────────────────────────────
     if (status === 401) {
       return res.status(502).json({
         error: "Invalid Groq API key.",
         reply: "AI service unavailable. For medical emergencies, please call 112 immediately.",
+        isEmergency: false,
       });
     }
     if (status === 429) {
       return res.status(502).json({
-        error: "Groq rate limit reached.",
-        reply: "Too many requests. Please wait a moment and try again. For emergencies, call 112.",
+        error: "Rate limit reached.",
+        reply: "Too many requests. Please wait a moment. For emergencies, call 112.",
+        isEmergency: false,
       });
     }
 
     res.status(502).json({
-      error: "AI service unavailable. Please try again.",
-      reply: "I'm having trouble connecting right now. For medical emergencies, please call 112 immediately.",
+      error: "AI service unavailable.",
+      reply: "I'm having trouble connecting. For medical emergencies, call 112 immediately.",
+      isEmergency: false,
     });
   }
 });
+
 
 app.get("/api/chat/sessions", auth, async (req, res) => {
   try {

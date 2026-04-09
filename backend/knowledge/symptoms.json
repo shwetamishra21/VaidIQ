@@ -1,0 +1,87 @@
+[
+  {
+    "id": "sym_fever_mild",
+    "text": "Mild fever (99-100.4°F / 37.2-38°C): Usually viral. Rest, hydration, paracetamol 500mg every 6 hours if needed. Monitor temperature. See doctor if fever persists more than 3 days or exceeds 102°F.",
+    "tags": ["fever", "viral", "temperature"]
+  },
+  {
+    "id": "sym_fever_high",
+    "text": "High fever above 102°F (38.9°C): May indicate bacterial infection, dengue, typhoid, or malaria. Visit doctor promptly. Take paracetamol for comfort. Avoid ibuprofen if dengue is suspected. Stay hydrated with ORS.",
+    "tags": ["fever", "high fever", "dengue", "malaria", "typhoid"]
+  },
+  {
+    "id": "sym_headache_tension",
+    "text": "Tension headache: Dull pressure across forehead or sides of head. Common causes — stress, dehydration, eye strain, poor posture. Relief: rest in quiet room, hydration, paracetamol or ibuprofen, cold/warm compress.",
+    "tags": ["headache", "tension headache", "stress"]
+  },
+  {
+    "id": "sym_headache_severe",
+    "text": "Severe sudden headache described as 'worst of life', headache with stiff neck, fever, or confusion may indicate meningitis or subarachnoid hemorrhage. This is a medical emergency — call 112 immediately.",
+    "tags": ["headache", "emergency", "meningitis", "severe headache"]
+  },
+  {
+    "id": "sym_chest_pain",
+    "text": "Chest pain with pressure, squeezing, or tightness — especially if it radiates to arm, jaw, or back — is a potential heart attack. EMERGENCY: Call 112 immediately. Do not drive yourself. Chew aspirin 325mg if available and not allergic.",
+    "tags": ["chest pain", "heart attack", "emergency", "cardiac"]
+  },
+  {
+    "id": "sym_breathlessness",
+    "text": "Sudden shortness of breath at rest, or with chest pain, is an emergency — call 112. Mild breathlessness on exertion in a known asthmatic: use rescue inhaler (Salbutamol). If no relief in 20 minutes, go to emergency.",
+    "tags": ["breathlessness", "shortness of breath", "asthma", "emergency"]
+  },
+  {
+    "id": "sym_stomach_pain",
+    "text": "Stomach pain with nausea: common causes are gastritis, acidity, food poisoning, IBS. For acidity: antacid (Gelusil, Digene) or omeprazole 20mg before meals. For food poisoning: ORS, light diet, rest. See doctor if pain is severe or persistent beyond 24 hours.",
+    "tags": ["stomach pain", "nausea", "acidity", "gastritis", "food poisoning"]
+  },
+  {
+    "id": "sym_diarrhea",
+    "text": "Diarrhea: Stay hydrated with ORS (Oral Rehydration Solution). Avoid dairy, spicy food. Zinc tablets help in children. See doctor if blood in stool, fever above 101°F, or symptoms persist beyond 48 hours. ORS packet available at all Jan Aushadhi stores.",
+    "tags": ["diarrhea", "dehydration", "ORS", "gastroenteritis"]
+  },
+  {
+    "id": "sym_cough_cold",
+    "text": "Common cold and cough: usually viral, antibiotics are NOT needed. Rest, steam inhalation, warm fluids, honey with ginger. Antihistamine (cetirizine 10mg) for runny nose. See doctor if cough lasts more than 2 weeks, or blood in sputum.",
+    "tags": ["cough", "cold", "viral", "URTI"]
+  },
+  {
+    "id": "sym_diabetes_symptoms",
+    "text": "Symptoms of uncontrolled diabetes: excessive thirst, frequent urination, blurred vision, fatigue, slow wound healing. Fasting blood sugar above 126 mg/dL or random above 200 mg/dL suggests diabetes. Consult doctor for diagnosis and treatment plan.",
+    "tags": ["diabetes", "blood sugar", "hyperglycemia", "thirst", "fatigue"]
+  },
+  {
+    "id": "sym_low_sugar",
+    "text": "Hypoglycemia (low blood sugar below 70 mg/dL): dizziness, sweating, shaking, confusion, hunger. For diabetic patients: immediately eat 15g fast sugar — 3-4 glucose tablets, half cup juice, or sugar dissolved in water. Recheck in 15 minutes. If unconscious, call 112.",
+    "tags": ["hypoglycemia", "low sugar", "diabetes", "dizziness", "emergency"]
+  },
+  {
+    "id": "sym_bp_high",
+    "text": "High BP reading (above 140/90 mmHg): can be caused by stress, salt intake, obesity, or hypertension. Sit quietly and recheck after 10 minutes. If above 180/120 mmHg (hypertensive crisis), or with headache/vision change/chest pain — emergency, call 112.",
+    "tags": ["blood pressure", "hypertension", "BP high", "heart"]
+  },
+  {
+    "id": "sym_bp_low",
+    "text": "Low BP (below 90/60 mmHg): dizziness, fainting, blurred vision. Lie down with legs elevated. Drink water or ORS. Common in dehydration, anemia, or medication side effects. See doctor if recurrent or with chest pain.",
+    "tags": ["blood pressure", "hypotension", "BP low", "dizziness", "fainting"]
+  },
+  {
+    "id": "sym_spo2_low",
+    "text": "SpO2 below 94%: indicates low oxygen saturation. Sit upright, breathe slowly and deeply. If below 90% — this is an emergency, call 112 immediately. Can indicate pneumonia, COVID-19, COPD exacerbation, or pulmonary embolism.",
+    "tags": ["spo2", "oxygen", "saturation", "breathing", "emergency", "pneumonia"]
+  },
+  {
+    "id": "sym_stroke_fast",
+    "text": "Stroke warning signs — remember FAST: Face drooping on one side, Arm weakness (one arm drifts down), Speech slurred or unable to speak, Time to call 112. Do not give food or water to a suspected stroke patient. Every minute matters — call 112 immediately.",
+    "tags": ["stroke", "FAST", "emergency", "paralysis", "speech", "face drooping"]
+  },
+  {
+    "id": "sym_allergy",
+    "text": "Allergic reaction: itching, hives, runny nose, sneezing — mild allergy. Take cetirizine 10mg or levocetirizine 5mg. For anaphylaxis (throat swelling, difficulty breathing, sudden drop in BP) — this is a life-threatening emergency, call 112 immediately.",
+    "tags": ["allergy", "anaphylaxis", "hives", "itching", "emergency"]
+  },
+  {
+    "id": "sym_mental_health",
+    "text": "Feeling extremely anxious, hopeless, or having thoughts of self-harm: you are not alone. Please call iCall at 9152987821 (TISS helpline, free, confidential). Also available: Vandrevala Foundation 1860-2662-345 (24/7). Do not suffer in silence — help is available.",
+    "tags": ["mental health", "anxiety", "depression", "suicide", "helpline"]
+  }
+]
