@@ -9,6 +9,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import Groq from "groq-sdk";
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
@@ -16,6 +17,9 @@ const __dirname  = path.dirname(__filename);
 
 const app  = express();
 const PORT = process.env.PORT || 4000;
+
+// ─── Groq Client ──────────────────────────────────────────────────────────────
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(cors({ origin: "*" }));
@@ -582,28 +586,17 @@ app.post("/api/chat", auth, async (req, res) => {
       session.messages = session.messages.slice(-40);
     }
 
-    const aiResponse = await axios.post(
-      process.env.AI_API_URL || "https://openrouter.ai/api/v1/chat/completions",
-      {
-        model: process.env.AI_MODEL || "openai/gpt-4o-mini",
-        messages: [
-          { role: "system", content: AI_SYSTEM_PROMPT },
-          ...session.messages,
-        ],
-        max_tokens: 1000,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": process.env.SITE_URL || "http://localhost:4000",
-          "X-Title": "VaidIQ",
-        },
-        timeout: 30000,
-      }
-    );
+    const aiResponse = await groq.chat.completions.create({
+      model: process.env.GROQ_MODEL || "llama3-8b-8192",
+      messages: [
+        { role: "system", content: AI_SYSTEM_PROMPT },
+        ...session.messages,
+      ],
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
 
-    const reply = aiResponse.data.choices[0].message.content;
+    const reply = aiResponse.choices[0].message.content;
     session.messages.push({ role: "assistant", content: reply });
     await session.save();
 
@@ -614,26 +607,19 @@ app.post("/api/chat", auth, async (req, res) => {
     });
 
   } catch (err) {
-    const status = err.response?.status;
-    const detail = err.response?.data;
-    console.error("AI Error status:", status);
-    console.error("AI Error detail:", JSON.stringify(detail, null, 2));
+    console.error("Groq AI Error:", err.message);
+
+    const status = err.status || err.response?.status;
 
     if (status === 401) {
       return res.status(502).json({
-        error: "Invalid OpenRouter API key.",
-        reply: "AI service unavailable. For medical emergencies, please call 112 immediately.",
-      });
-    }
-    if (status === 402) {
-      return res.status(502).json({
-        error: "No credits on OpenRouter account.",
+        error: "Invalid Groq API key.",
         reply: "AI service unavailable. For medical emergencies, please call 112 immediately.",
       });
     }
     if (status === 429) {
       return res.status(502).json({
-        error: "OpenRouter rate limit reached.",
+        error: "Groq rate limit reached.",
         reply: "Too many requests. Please wait a moment and try again. For emergencies, call 112.",
       });
     }
