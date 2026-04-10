@@ -1024,7 +1024,9 @@ textarea.form-in{resize:vertical;min-height:72px;}
 <div class="toast" id="toastEl"></div>
 
 <script>
-const API = "http://localhost:4000/api";
+const API = window.location.hostname === "localhost"
+  ? "http://localhost:4000/api"
+  : "/api";
 let TOKEN = localStorage.getItem("vaidiq_token") || "";
 let USER  = JSON.parse(localStorage.getItem("vaidiq_user") || "null");
 let chatSessionId = null;
