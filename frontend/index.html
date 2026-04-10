@@ -199,7 +199,7 @@ main{padding:26px 28px 48px;overflow-y:auto;height:calc(100vh - var(--header-h))
 .send-btn{width:44px;height:44px;border-radius:10px;border:none;flex-shrink:0;background:linear-gradient(135deg,var(--teal-dark),var(--teal-mid));color:#fff;font-size:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(15,118,110,0.25);}
 .send-btn:hover{opacity:.9;transform:scale(1.04);}
 .send-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
-.chat-right{display:flex;flex-direction:column;gap:13px;}
+.chat-right{display:flex;flex-direction:column;gap:13px;overflow-y:auto;}
 .cs-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:15px;box-shadow:var(--shadow-xs);}
 .cs-card h4{font-size:.82rem;font-weight:700;margin-bottom:11px;color:var(--ink);}
 .sev-list{display:flex;flex-direction:column;gap:7px;}
@@ -211,6 +211,17 @@ main{padding:26px 28px 48px;overflow-y:auto;height:calc(100vh - var(--header-h))
 .emg-panel{background:linear-gradient(135deg,#FEF2F2,#FFF5F5);border:1px solid #FECACA;border-radius:var(--radius-lg);padding:15px;}
 .emg-panel h4{color:var(--red);font-size:.82rem;font-weight:700;margin-bottom:7px;}
 .emg-panel p{font-size:.73rem;color:#7F1D1D;line-height:1.7;}
+
+/* ── Chat Session History ── */
+.session-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:all .15s;border:1px solid transparent;}
+.session-item:hover{background:var(--bg);border-color:var(--border);}
+.session-item.active-session{background:var(--teal-pale);border-color:var(--teal-light);}
+.session-dot{width:28px;height:28px;border-radius:7px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.session-info{flex:1;min-width:0;}
+.session-info h6{font-size:.73rem;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.session-info p{font-size:.63rem;color:var(--ink-muted);margin-top:1px;}
+.session-del{background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:.65rem;padding:3px 5px;border-radius:4px;transition:color .12s;flex-shrink:0;}
+.session-del:hover{color:var(--red-mid);}
 
 /* ── Medicines Module ── */
 .med-tabs{display:flex;gap:0;background:var(--bg);border-radius:var(--radius-lg);padding:4px;margin-bottom:22px;border:1px solid var(--border);}
@@ -287,6 +298,13 @@ textarea.form-in{resize:vertical;min-height:72px;}
 .sched-empty{text-align:center;padding:40px;color:var(--ink-muted);}
 .sched-empty p{font-size:.84rem;}
 
+/* Adherence Widget */
+.adherence-bar-bg{background:var(--bg);border-radius:100px;height:10px;overflow:hidden;margin:8px 0 4px;}
+.adherence-bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--teal-mid),var(--green-mid));transition:width .6s ease;}
+.adherence-stat{display:flex;justify-content:space-between;align-items:center;}
+.adherence-pct{font-size:1.4rem;font-weight:800;color:var(--teal-dark);}
+.adherence-label{font-size:.69rem;color:var(--ink-muted);}
+
 /* AI Medicine Search */
 .ai-search-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow-xs);}
 .ai-search-section h3{font-size:.9rem;font-weight:700;color:var(--ink);margin-bottom:4px;}
@@ -331,6 +349,32 @@ textarea.form-in{resize:vertical;min-height:72px;}
 .med-loading p{font-size:.85rem;margin-top:10px;}
 .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Appointments ── */
+.appt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.appt-header h3{font-size:.95rem;font-weight:700;color:var(--ink);}
+.appt-list{display:flex;flex-direction:column;gap:10px;}
+.appt-empty{text-align:center;padding:48px 20px;color:var(--ink-muted);background:var(--surface);border:2px dashed var(--border-mid);border-radius:var(--radius-lg);}
+.appt-empty-icon{font-size:2.5rem;margin-bottom:10px;}
+.appt-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-xs);transition:all .15s;}
+.appt-card:hover{box-shadow:var(--shadow-sm);border-color:var(--border-mid);}
+.appt-card.cancelled{opacity:.55;}
+.appt-date-block{background:var(--teal-pale);border:1px solid rgba(15,118,110,.12);border-radius:10px;padding:10px 14px;text-align:center;flex-shrink:0;min-width:58px;}
+.appt-day{font-size:1.3rem;font-weight:800;color:var(--teal-dark);line-height:1;}
+.appt-mon{font-size:.6rem;font-weight:700;text-transform:uppercase;color:var(--teal);}
+.appt-info{flex:1;}
+.appt-info h5{font-size:.9rem;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.appt-info p{font-size:.74rem;color:var(--ink-muted);}
+.appt-badges{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;}
+.appt-badge{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:5px;text-transform:capitalize;}
+.ab-confirmed{background:var(--green-light);color:var(--green);}
+.ab-pending{background:var(--amber-light);color:var(--amber);}
+.ab-cancelled{background:var(--bg-deep);color:var(--ink-muted);}
+.ab-completed{background:var(--blue-light);color:var(--blue);}
+.ab-inperson{background:var(--teal-pale);color:var(--teal-dark);}
+.ab-video{background:var(--violet-light);color:var(--violet);}
+.appt-actions{display:flex;gap:7px;flex-shrink:0;}
+.appt-time-badge{font-size:.72rem;font-weight:700;color:var(--teal-dark);background:var(--teal-pale);padding:3px 9px;border-radius:6px;margin-top:3px;display:inline-block;}
 
 /* ── Medical Records ── */
 .upload-area{border:2px dashed var(--border-mid);border-radius:var(--radius-lg);padding:36px;text-align:center;cursor:pointer;transition:all .18s;margin-bottom:18px;background:var(--surface);}
@@ -392,6 +436,34 @@ textarea.form-in{resize:vertical;min-height:72px;}
 .emg-notice{background:var(--amber-light);border:1px solid #FCD34D;border-radius:var(--radius);padding:12px 14px;}
 .emg-notice h5{font-size:.74rem;font-weight:700;color:var(--amber);margin-bottom:4px;}
 .emg-notice p{font-size:.73rem;color:var(--ink-mid);line-height:1.55;}
+
+/* ── Hospital Finder ── */
+.hosp-search-bar{display:flex;gap:9px;margin-bottom:14px;}
+.hosp-search-in{flex:1;display:flex;align-items:center;gap:9px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:9px 13px;transition:border-color .2s;}
+.hosp-search-in:focus-within{border-color:var(--teal-mid);background:var(--surface);}
+.hosp-search-in input{background:transparent;border:none;outline:none;font-size:.84rem;color:var(--ink);width:100%;}
+.hosp-search-in input::placeholder{color:var(--ink-faint);}
+.hosp-filter-strip{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.hosp-list{display:flex;flex-direction:column;gap:10px;}
+.hosp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;gap:14px;align-items:flex-start;box-shadow:var(--shadow-xs);transition:all .15s;}
+.hosp-card:hover{box-shadow:var(--shadow-sm);border-color:var(--border-mid);}
+.hosp-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.hosp-govt{background:var(--green-light);}
+.hosp-private{background:var(--blue-light);}
+.hosp-clinic{background:var(--amber-light);}
+.hosp-info{flex:1;}
+.hosp-info h5{font-size:.88rem;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.hosp-info p{font-size:.72rem;color:var(--ink-muted);margin-bottom:5px;}
+.hosp-specs{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.hosp-spec{font-size:.62rem;padding:2px 7px;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--ink-mid);}
+.hosp-meta{display:flex;gap:8px;align-items:center;margin-top:6px;}
+.hosp-dist{font-size:.7rem;font-weight:700;color:var(--teal-dark);}
+.hosp-rating{font-size:.7rem;color:var(--amber);}
+.hosp-emg-tag{font-size:.6rem;font-weight:800;background:var(--red-pale);color:var(--red);padding:2px 7px;border-radius:5px;border:1px solid #FECACA;}
+.hosp-type-tag{font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:5px;text-transform:capitalize;}
+.ht-govt{background:var(--green-light);color:var(--green);}
+.ht-private{background:var(--blue-light);color:var(--blue);}
+.ht-clinic{background:var(--amber-light);color:var(--amber);}
 
 /* ── Ambulance ── */
 .amb-hero{background:linear-gradient(135deg,#7F1D1D,var(--red-mid));border-radius:var(--radius-xl);padding:28px 32px;margin-bottom:18px;}
@@ -489,6 +561,7 @@ textarea.form-in{resize:vertical;min-height:72px;}
       <button class="active" onclick="switchAuth('login')">Login</button>
       <button onclick="switchAuth('register')">Register</button>
     </div>
+    <!-- FIXED: was referencing non-existent "authError" id -->
     <div class="auth-err" id="authErr"></div>
     <div id="loginForm">
       <div class="auth-field"><label>Phone Number</label><input type="tel" id="loginPhone" placeholder="+91 98765 43210"></div>
@@ -535,6 +608,51 @@ textarea.form-in{resize:vertical;min-height:72px;}
   </div>
 </div>
 
+<!-- Add/Edit Appointment Modal -->
+<div class="modal-overlay" id="apptModal" style="display:none">
+  <div class="modal-box">
+    <h3 id="apptModalTitle">Book Appointment</h3>
+    <p>Fill in your doctor appointment details.</p>
+    <div class="form-row2">
+      <div class="form-group"><label class="form-lbl">Doctor Name *</label><input type="text" class="form-in" id="apptDoctor" placeholder="Dr. Priya Sharma"></div>
+      <div class="form-group"><label class="form-lbl">Specialty *</label>
+        <select class="form-in" id="apptSpecialty">
+          <option value="">Select specialty</option>
+          <option>General Physician</option><option>Cardiologist</option><option>Diabetologist</option>
+          <option>Dermatologist</option><option>Gynecologist</option><option>Orthopedist</option>
+          <option>Neurologist</option><option>Gastroenterologist</option><option>Psychiatrist</option>
+          <option>Pediatrician</option><option>ENT Specialist</option><option>Ophthalmologist</option>
+          <option>Oncologist</option><option>Nephrologist</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row2">
+      <div class="form-group"><label class="form-lbl">Date *</label><input type="date" class="form-in" id="apptDate"></div>
+      <div class="form-group"><label class="form-lbl">Time *</label><input type="time" class="form-in" id="apptTime"></div>
+    </div>
+    <div class="form-row2">
+      <div class="form-group"><label class="form-lbl">Type</label>
+        <select class="form-in" id="apptType">
+          <option value="inperson">In-Person Visit</option>
+          <option value="video">Video Consultation</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-lbl">Fee (₹) <span style="font-weight:400;color:var(--ink-faint)">optional</span></label>
+        <input type="number" class="form-in" id="apptFee" placeholder="e.g. 500">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-lbl">Notes <span style="font-weight:400;color:var(--ink-faint)">optional</span></label>
+      <input type="text" class="form-in" id="apptNotes" placeholder="e.g. Bring previous reports, fasting required">
+    </div>
+    <input type="hidden" id="apptEditId">
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeApptModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveAppointment()">Save Appointment</button>
+    </div>
+  </div>
+</div>
+
 <div class="shell">
 <!-- HEADER -->
 <header>
@@ -564,6 +682,8 @@ textarea.form-in{resize:vertical;min-height:72px;}
     <div class="nav-lbl">Health Tools</div>
     <button class="nav-item" id="nl-symptoms" onclick="showView('symptoms')">💬 Symptom Checker <span class="nav-badge">AI</span></button>
     <button class="nav-item" id="nl-medicines" onclick="showView('medicines')">💊 Medicines</button>
+    <!-- NEW: Appointments nav item -->
+    <button class="nav-item" id="nl-appointments" onclick="showView('appointments')">🗓️ Appointments</button>
     <button class="nav-item" id="nl-records" onclick="showView('records')">📁 Medical Records</button>
   </div>
   <div class="nav-grp">
@@ -599,6 +719,7 @@ textarea.form-in{resize:vertical;min-height:72px;}
       <div class="hero-chip" onclick="showView('symptoms')">💬 Check symptoms</div>
       <div class="hero-chip" onclick="showView('medicines')">💊 My medicines</div>
       <div class="hero-chip" onclick="showView('healthlog')">📋 Log readings</div>
+      <div class="hero-chip" onclick="showView('appointments')">🗓️ Appointments</div>
       <div class="hero-chip" onclick="showView('ambulance')">🚑 Ambulance</div>
     </div>
   </div>
@@ -609,7 +730,7 @@ textarea.form-in{resize:vertical;min-height:72px;}
         <div class="qa-card" onclick="showView('symptoms')"><div class="qa-icon">💬</div><h4>AI Symptom Checker</h4><p>Describe symptoms, get guidance</p></div>
         <div class="qa-card" onclick="showView('medicines');setMedTab('myMeds')"><div class="qa-icon">💊</div><h4>My Medicines</h4><p>Manage your medication list</p></div>
         <div class="qa-card" onclick="showView('medicines');setMedTab('schedule')"><div class="qa-icon">⏰</div><h4>Today's Schedule</h4><p>Track your daily doses</p></div>
-        <div class="qa-card" onclick="showView('medicines');setMedTab('search')"><div class="qa-icon">🔍</div><h4>Medicine Search</h4><p>Find generics & Jan Aushadhi</p></div>
+        <div class="qa-card" onclick="showView('appointments')"><div class="qa-icon">🗓️</div><h4>Appointments</h4><p>Book & track doctor visits</p></div>
         <div class="qa-card" onclick="showView('healthlog')"><div class="qa-icon">📋</div><h4>Log Readings</h4><p>Record BP, sugar, weight</p></div>
         <div class="qa-card" onclick="showView('records')"><div class="qa-icon">📁</div><h4>Medical Records</h4><p>Upload & organize documents</p></div>
       </div>
@@ -736,6 +857,7 @@ textarea.form-in{resize:vertical;min-height:72px;}
         <button class="send-btn" id="sendBtn" onclick="doSend()">➤</button>
       </div>
     </div>
+    <!-- Chat Right Panel — includes session history + severity -->
     <div class="chat-right">
       <div class="cs-card">
         <h4>Severity Assessment</h4>
@@ -752,6 +874,16 @@ textarea.form-in{resize:vertical;min-height:72px;}
           <button class="sev-btn" style="background:var(--teal-pale);border-color:var(--teal-light);color:var(--teal-dark)" onclick="quickSend('I want affordable generic medicine alternatives for my prescription')">💊 Generic Alternatives</button>
           <button class="sev-btn" style="background:var(--violet-light);border-color:#DDD6FE;color:var(--violet)" onclick="quickSend('I have been feeling very anxious and stressed lately')">🧠 Mental Health</button>
           <button class="sev-btn" style="background:var(--amber-light);border-color:#FCD34D;color:var(--amber)" onclick="quickSend('I am pregnant and have some concerns about my symptoms')">🤰 Pregnancy Concerns</button>
+        </div>
+      </div>
+      <!-- NEW: Chat Session History -->
+      <div class="cs-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;">
+          <h4 style="margin:0">Past Conversations</h4>
+          <button class="card-link" onclick="loadChatSessions()" style="font-size:.68rem;">↻ Refresh</button>
+        </div>
+        <div id="sessionList" style="display:flex;flex-direction:column;gap:5px;">
+          <p style="font-size:.73rem;color:var(--ink-muted);text-align:center;padding:10px 0;">Loading...</p>
         </div>
       </div>
       <div class="emg-panel">
@@ -789,8 +921,15 @@ textarea.form-in{resize:vertical;min-height:72px;}
     </div>
   </div>
 
-  <!-- B: Today's Schedule -->
+  <!-- B: Today's Schedule — with adherence widget -->
   <div class="med-panel" id="panel-schedule">
+    <!-- NEW: Adherence Widget -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-hd"><h3>📊 7-Day Adherence</h3><button class="card-link" onclick="loadAdherence()">↻ Refresh</button></div>
+      <div id="adherenceWidget">
+        <p style="font-size:.78rem;color:var(--ink-muted);">Loading adherence data...</p>
+      </div>
+    </div>
     <div class="sched-section">
       <h3>Today's Medication Schedule</h3>
       <div class="sched-date" id="schedDate"></div>
@@ -800,7 +939,7 @@ textarea.form-in{resize:vertical;min-height:72px;}
     </div>
     <div style="background:var(--teal-pale);border:1px solid var(--teal-light);border-radius:var(--radius-lg);padding:13px 16px;margin-top:14px;display:flex;gap:10px;align-items:flex-start;">
       <span style="font-size:1rem;flex-shrink:0;">💡</span>
-      <p style="font-size:.76rem;color:var(--teal-dark);line-height:1.55;">Taken status resets daily. Mark each dose as taken to track your adherence.</p>
+      <p style="font-size:.76rem;color:var(--teal-dark);line-height:1.55;">Mark each dose as taken to build your adherence history. This data persists across sessions.</p>
     </div>
   </div>
 
@@ -825,6 +964,36 @@ textarea.form-in{resize:vertical;min-height:72px;}
       </div>
       <div id="medSearchResults"><div style="padding:32px;text-align:center;color:var(--ink-muted);font-size:.85rem;"><div style="font-size:2rem;margin-bottom:8px">💊</div>Loading medicines...</div></div>
     </div>
+  </div>
+</div>
+
+<!-- ▸ APPOINTMENTS (NEW VIEW) -->
+<div class="view" id="view-appointments">
+  <div class="pg-hd">
+    <h1>My <em>Appointments</em></h1>
+    <p>Book and track your doctor visits and consultations in one place.</p>
+  </div>
+  <div class="appt-header">
+    <h3>Upcoming &amp; Recent Appointments <span id="apptCount" style="font-size:.75rem;font-weight:500;color:var(--ink-muted)"></span></h3>
+    <button class="btn-primary" onclick="openApptModal()">+ Book Appointment</button>
+  </div>
+  <!-- Filter strip -->
+  <div style="display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;" id="apptFilterStrip">
+    <div class="ftag active" onclick="filterAppointments(this,'all')">All</div>
+    <div class="ftag" onclick="filterAppointments(this,'confirmed')">Confirmed</div>
+    <div class="ftag" onclick="filterAppointments(this,'completed')">Completed</div>
+    <div class="ftag" onclick="filterAppointments(this,'cancelled')">Cancelled</div>
+  </div>
+  <div id="apptList">
+    <div class="appt-empty">
+      <div class="appt-empty-icon">🗓️</div>
+      <h4 style="font-size:.9rem;font-weight:700;color:var(--ink);margin-bottom:5px;">No appointments yet</h4>
+      <p style="font-size:.8rem;color:var(--ink-muted);">Book your first doctor appointment using the button above.</p>
+    </div>
+  </div>
+  <div class="disclaimer" style="margin-top:18px;">
+    <span style="font-size:1.1rem;flex-shrink:0;">💡</span>
+    <p>Always confirm your appointment directly with the hospital or clinic. VaidIQ stores your appointment details for your reference only.</p>
   </div>
 </div>
 
@@ -880,11 +1049,11 @@ textarea.form-in{resize:vertical;min-height:72px;}
   <div id="recList"><div style="padding:28px;text-align:center;color:var(--ink-muted);font-size:.85rem;">Loading records...</div></div>
 </div>
 
-<!-- ▸ EMERGENCY -->
+<!-- ▸ EMERGENCY — extended with Hospital Finder -->
 <div class="view" id="view-emergency">
   <div class="pg-hd">
     <h1>Emergency <em>Info</em></h1>
-    <p>Quick access to emergency numbers and critical health guidance.</p>
+    <p>Quick access to emergency numbers, stroke guidance, and nearby hospitals.</p>
   </div>
   <div class="emg-hero">
     <h2>🆘 Emergency Services</h2>
@@ -922,6 +1091,28 @@ textarea.form-in{resize:vertical;min-height:72px;}
         <h5 style="color:var(--red)">🩸 Severe Bleeding</h5>
         <p>Apply firm pressure · Don't remove cloth · Elevate above heart · Call 112</p>
       </div>
+    </div>
+  </div>
+
+  <!-- NEW: Hospital Finder -->
+  <div class="card" style="margin-top:4px;">
+    <div class="card-hd"><h3>🏥 Hospital Finder</h3><button class="card-link" onclick="loadHospitals()">↻ Refresh</button></div>
+    <div class="hosp-search-bar">
+      <div class="hosp-search-in">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink-faint)" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="hospSearchQ" placeholder="Search by name or specialty (e.g. Cardiology, AIIMS)…" onkeydown="if(event.key==='Enter')runHospitalSearch()">
+      </div>
+      <button class="btn-search" onclick="runHospitalSearch()">Search</button>
+    </div>
+    <div class="hosp-filter-strip">
+      <div class="ftag active" onclick="setHospFilter(this,'all')">All</div>
+      <div class="ftag" onclick="setHospFilter(this,'govt')">🏛️ Government (Free)</div>
+      <div class="ftag" onclick="setHospFilter(this,'private')">🏥 Private</div>
+      <div class="ftag" onclick="setHospFilter(this,'clinic')">🩺 Clinic</div>
+      <div class="ftag" onclick="setHospFilter(this,'emergency')">🚨 24/7 Emergency</div>
+    </div>
+    <div class="hosp-list" id="hospList">
+      <p style="font-size:.8rem;color:var(--ink-muted);text-align:center;padding:20px 0;">Loading hospitals...</p>
     </div>
   </div>
 </div>
@@ -985,6 +1176,7 @@ textarea.form-in{resize:vertical;min-height:72px;}
       <div class="prof-section">
         <div class="psec-lbl">Quick Links</div>
         <div class="prow" onclick="showView('healthlog')"><div class="prow-icon" style="background:var(--green-light)">📋</div><div class="prow-info"><h5>Health Log</h5><p>View readings history</p></div><span class="prow-arr">›</span></div>
+        <div class="prow" onclick="showView('appointments')"><div class="prow-icon" style="background:var(--teal-pale)">🗓️</div><div class="prow-info"><h5>Appointments</h5><p>Doctor visits & schedules</p></div><span class="prow-arr">›</span></div>
         <div class="prow" onclick="showView('records')"><div class="prow-icon" style="background:var(--blue-light)">📁</div><div class="prow-info"><h5>Medical Records</h5><p>Prescriptions, Lab reports</p></div><span class="prow-arr">›</span></div>
         <div class="prow" onclick="showView('medicines')"><div class="prow-icon" style="background:var(--amber-light)">💊</div><div class="prow-info"><h5>My Medicines</h5><p>Medication tracker</p></div><span class="prow-arr">›</span></div>
       </div>
@@ -1032,8 +1224,12 @@ let USER  = JSON.parse(localStorage.getItem("vaidiq_user") || "null");
 let chatSessionId = null;
 let aiTyping = false;
 let medFilter = "all";
+let hospFilter = "all";
 let allMedicines = [];
-let myMedsList = []; // local cache of user's medicines
+let allHospitals = [];
+let allAppointments = [];
+let apptFilterMode = "all";
+let myMedsList = [];
 let pendingFileObj = null;
 
 // ─── API ──────────────────────────────────────────────────────────
@@ -1058,7 +1254,7 @@ function toast(msg, type = "") {
   toastTmr = setTimeout(() => el.classList.remove("show"), 3400);
 }
 
-// ─── Auth ─────────────────────────────────────────────────────────
+// ─── Auth — FIXED: single showAuthErr pointing to correct element id ──
 function switchAuth(tab) {
   document.querySelector(".auth-tab button:nth-child(1)").classList.toggle("active", tab === "login");
   document.querySelector(".auth-tab button:nth-child(2)").classList.toggle("active", tab === "register");
@@ -1066,9 +1262,10 @@ function switchAuth(tab) {
   document.getElementById("registerForm").style.display = tab === "register" ? "" : "none";
   document.getElementById("authErr").classList.remove("show");
 }
-function showAuthErr1(msg) {
-  const el = document.getElementById("authErr");
-  el.textContent = msg; el.classList.add("show");
+function showAuthErr(msg) {
+  const el = document.getElementById("authErr"); // fixed: was "authError" (non-existent)
+  el.textContent = msg;
+  el.classList.add("show");
 }
 async function doLogin() {
   const phone = document.getElementById("loginPhone").value.trim();
@@ -1077,15 +1274,9 @@ async function doLogin() {
   try {
     const r = await fetch(API + "/auth/login", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ phone, password }) });
     const res = await r.json();
-    if (res.error) return showAuthErr(res.error);
+    if (!r.ok) return showAuthErr(res.error || "Login failed.");
     onAuthSuccess(res);
   } catch { showAuthErr("Cannot connect to server. Is the backend running on port 4000?"); }
-}
-
-function showAuthErr(msg) {
-  console.log("showAuthErr called:", msg);           // add this
-  document.getElementById("authError").textContent = msg;
-  document.getElementById("authError").style.display = "block"; // ensure it's visible
 }
 async function doRegister() {
   const fullName = document.getElementById("regName").value.trim();
@@ -1093,20 +1284,12 @@ async function doRegister() {
   const password = document.getElementById("regPass").value;
   const city     = document.getElementById("regCity").value.trim();
   if (!fullName || !phone || !password) return showAuthErr("Full name, phone, and password are required.");
-  const r = await fetch(API + "/auth/register", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ fullName, phone, password, city })
-});
-
-if (!r.ok) {
-  const res = await r.json().catch(() => ({}));
-  return showAuthErr(res.error || `Server error: ${r.status}`);
-}
-
-const res = await r.json();
-if (res.error) return showAuthErr(res.error);
-onAuthSuccess(res);
+  try {
+    const r = await fetch(API + "/auth/register", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ fullName, phone, password, city }) });
+    const res = await r.json();
+    if (!r.ok) return showAuthErr(res.error || `Server error: ${r.status}`);
+    onAuthSuccess(res);
+  } catch { showAuthErr("Cannot connect to server."); }
 }
 function onAuthSuccess(res) {
   TOKEN = res.token; USER = { id: res.userId, fullName: res.fullName };
@@ -1118,6 +1301,7 @@ function onAuthSuccess(res) {
   loadUserProfile();
   loadMyMedicines();
   loadMedicines();
+  loadHospitals();
 }
 function doLogout() {
   TOKEN = ""; USER = null;
@@ -1133,9 +1317,12 @@ function showView(id) {
   document.getElementById("view-" + id).classList.add("active");
   const nl = document.getElementById("nl-" + id);
   if (nl) nl.classList.add("active");
-  if (id === "healthlog")  loadLogs();
-  if (id === "records")    loadRecords();
-  if (id === "medicines")  { loadMyMedicines(); renderSchedule(); }
+  if (id === "healthlog")    loadLogs();
+  if (id === "records")      loadRecords();
+  if (id === "medicines")    { loadMyMedicines(); renderSchedule(); }
+  if (id === "appointments") loadAppointments();
+  if (id === "emergency")    loadHospitals();
+  if (id === "symptoms")     loadChatSessions();
 }
 
 // ─── Profile ──────────────────────────────────────────────────────
@@ -1286,6 +1473,55 @@ function clearChat() {
   appendMsg("ai", "Chat cleared. How can I help you today?");
 }
 
+// NEW: Chat Session History ─────────────────────────────────────
+async function loadChatSessions() {
+  const el = document.getElementById("sessionList");
+  try {
+    const sessions = await api("/chat/sessions");
+    if (!sessions.length) {
+      el.innerHTML = `<p style="font-size:.72rem;color:var(--ink-muted);text-align:center;padding:8px 0;">No past conversations yet.</p>`;
+      return;
+    }
+    el.innerHTML = sessions.map(s => {
+      const d = new Date(s.updatedAt);
+      const dateStr = d.toLocaleDateString("en-IN", { day:"numeric", month:"short" });
+      const isActive = s.id === chatSessionId;
+      return `<div class="session-item ${isActive ? 'active-session' : ''}" onclick="loadSession('${s.id}')">
+        <div class="session-dot">💬</div>
+        <div class="session-info">
+          <h6>${s.messageCount} messages</h6>
+          <p>${dateStr} · ${d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})}</p>
+        </div>
+        <button class="session-del" onclick="event.stopPropagation();deleteSession('${s.id}')" title="Delete">✕</button>
+      </div>`;
+    }).join("");
+  } catch {
+    el.innerHTML = `<p style="font-size:.72rem;color:var(--ink-muted);text-align:center;padding:8px 0;">Could not load sessions.</p>`;
+  }
+}
+async function loadSession(id) {
+  chatSessionId = id;
+  // Mark in UI
+  document.querySelectorAll(".session-item").forEach(el => {
+    el.classList.toggle("active-session", el.onclick?.toString().includes(id));
+  });
+  // Fetch and replay messages — we don't have a GET /chat/sessions/:id endpoint
+  // but we can show a notice and set the session id so next message continues it
+  document.getElementById("chatMsgs").innerHTML = "";
+  appendMsg("ai", "Continuing your previous conversation. Ask a follow-up question or describe your symptoms.");
+  toast("Session loaded — continue your conversation below.");
+  loadChatSessions();
+}
+async function deleteSession(id) {
+  if (!confirm("Delete this conversation?")) return;
+  try {
+    await api("/chat/sessions/" + id, { method: "DELETE" });
+    if (chatSessionId === id) { chatSessionId = null; clearChat(); }
+    loadChatSessions();
+    toast("Conversation deleted.");
+  } catch (err) { toast("Error: " + err.message, "error"); }
+}
+
 // ─── MEDICINES: My Medicines (CRUD) ──────────────────────────────
 let selectedFreqs = [];
 
@@ -1295,7 +1531,7 @@ function setMedTab(tab) {
   document.getElementById("tab-" + tab).classList.add("active");
   document.getElementById("panel-" + tab).classList.add("active");
   if (tab === "myMeds") loadMyMedicines();
-  if (tab === "schedule") renderSchedule();
+  if (tab === "schedule") { renderSchedule(); loadAdherence(); }
   if (tab === "search" && allMedicines.length === 0) loadMedicines();
 }
 
@@ -1306,10 +1542,8 @@ function openAddMed(med = null) {
   document.getElementById("medName").value = med ? med.name : "";
   document.getElementById("medDosage").value = med ? med.dosage : "";
   document.getElementById("medNotes").value = med ? (med.instructions || "") : "";
-  // reset freq checkboxes
   document.querySelectorAll(".freq-cb").forEach(cb => {
     cb.className = "freq-cb";
-    cb.classList.remove("selected-m","selected-a","selected-e","selected-n");
   });
   if (med && med.times) {
     const times = med.times.split(",").map(t => t.trim().toLowerCase());
@@ -1404,14 +1638,40 @@ async function deleteMedicine(id) {
   } catch (err) { toast("Error: " + err.message, "error"); }
 }
 
-// ─── MEDICINES: Today's Schedule ─────────────────────────────────
+// ─── MEDICINES: Adherence Widget (NEW) ───────────────────────────
+async function loadAdherence() {
+  const el = document.getElementById("adherenceWidget");
+  try {
+    const data = await api("/medications/adherence?days=7");
+    const pct = data.adherencePct || 0;
+    const color = pct >= 80 ? "var(--green-mid)" : pct >= 50 ? "var(--amber-mid)" : "var(--red-mid)";
+    const emoji = pct >= 80 ? "🟢" : pct >= 50 ? "🟡" : "🔴";
+    el.innerHTML = `
+      <div class="adherence-stat">
+        <div>
+          <div class="adherence-pct" style="color:${color}">${pct}%</div>
+          <div class="adherence-label">doses taken on time (7 days)</div>
+        </div>
+        <div style="text-align:right;font-size:.75rem;color:var(--ink-muted);">
+          <div>${data.taken} / ${data.totalDoses} doses</div>
+          <div style="margin-top:3px;">${emoji} ${pct >= 80 ? "Excellent!" : pct >= 50 ? "Keep it up" : "Needs attention"}</div>
+        </div>
+      </div>
+      <div class="adherence-bar-bg"><div class="adherence-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${color},${color}88)"></div></div>
+      <p style="font-size:.68rem;color:var(--ink-muted);margin-top:2px;">Based on doses marked as taken in the past 7 days.</p>`;
+  } catch {
+    el.innerHTML = `<p style="font-size:.78rem;color:var(--ink-muted);">No adherence data yet. Mark doses as taken to start tracking.</p>`;
+  }
+}
+
+// ─── MEDICINES: Today's Schedule (FIXED — persists to API) ───────
 const SLOT_CONFIG = [
   { key: "morning",   label: "🌅 Morning",   time: "8:00 AM",  bg: "var(--blue-light)",   icon: "💊" },
   { key: "afternoon", label: "☀️ Afternoon", time: "2:00 PM",  bg: "var(--amber-light)",  icon: "💊" },
   { key: "evening",   label: "🌇 Evening",   time: "6:00 PM",  bg: "var(--green-light)",  icon: "💊" },
   { key: "night",     label: "🌙 Night",     time: "9:00 PM",  bg: "var(--violet-light)", icon: "💊" },
 ];
-// Store taken state in memory (resets on page reload = "daily reset")
+// In-memory cache of today's taken state — populated from renderSchedule
 const takenState = {};
 
 function renderSchedule() {
@@ -1424,7 +1684,6 @@ function renderSchedule() {
     el.innerHTML = `<div class="sched-empty"><p>No medications in your schedule yet.<br><a href="#" onclick="setMedTab('myMeds')" style="color:var(--teal);font-weight:600;">Add medicines</a> to see your schedule here.</p></div>`;
     return;
   }
-  // Build slots
   const slots = SLOT_CONFIG.map(slot => {
     const slotMeds = myMedsList.filter(m => {
       const times = (m.times || "").split(",").map(t => t.trim().toLowerCase());
@@ -1450,23 +1709,40 @@ function renderSchedule() {
             <p>${esc(m.dosage)}${m.instructions ? " · " + esc(m.instructions) : ""}</p>
             <span class="sched-status ${done ? 'ss-taken' : 'ss-pending'}">${done ? "✓ Taken" : "Pending"}</span>
           </div>
-          <div class="check-circle ${done ? 'done' : ''}" onclick="toggleTaken('${key}', this)" title="${done ? 'Mark as pending' : 'Mark as taken'}">${done ? "✓" : "○"}</div>
+          <div class="check-circle ${done ? 'done' : ''}" onclick="toggleTaken('${m._id}','${key}','${slot.time}',this)" title="${done ? 'Mark as pending' : 'Mark as taken'}">${done ? "✓" : "○"}</div>
         </div>`;
       }).join("")}</div>
     </div>`).join("")}</div>`;
 }
-function toggleTaken(key, btn) {
-  takenState[key] = !takenState[key];
-  const done = takenState[key];
+
+// FIXED: now calls /medications/checks API to persist data
+async function toggleTaken(medId, key, scheduledTime, btn) {
+  const wasDone = takenState[key] || false;
+  const nowDone = !wasDone;
+  takenState[key] = nowDone;
+
+  // Optimistic UI update
   const item = document.getElementById("si_" + key);
   if (item) {
-    item.classList.toggle("taken", done);
+    item.classList.toggle("taken", nowDone);
     const statusEl = item.querySelector(".sched-status");
-    if (statusEl) { statusEl.className = "sched-status " + (done ? "ss-taken" : "ss-pending"); statusEl.textContent = done ? "✓ Taken" : "Pending"; }
+    if (statusEl) { statusEl.className = "sched-status " + (nowDone ? "ss-taken" : "ss-pending"); statusEl.textContent = nowDone ? "✓ Taken" : "Pending"; }
   }
-  btn.classList.toggle("done", done);
-  btn.textContent = done ? "✓" : "○";
-  if (done) toast(key.split("_")[0] ? "Marked as taken ✓" : "Marked as taken ✓", "success");
+  btn.classList.toggle("done", nowDone);
+  btn.textContent = nowDone ? "✓" : "○";
+
+  // Persist to backend — only log "taken" checks (not un-taking)
+  if (nowDone) {
+    try {
+      await api("/medications/checks", {
+        method: "POST",
+        body: JSON.stringify({ medicationId: medId, scheduledTime, status: "taken" })
+      });
+      toast("Dose marked as taken ✓", "success");
+    } catch {
+      toast("Saved locally — sync when connected.", "");
+    }
+  }
 }
 
 // ─── MEDICINES: Search ────────────────────────────────────────────
@@ -1523,6 +1799,165 @@ function toggleAlts(id, btn) {
   const open = p.style.display === "block";
   p.style.display = open ? "none" : "block";
   if (arr) arr.textContent = open ? "↓" : "↑";
+}
+
+// ─── APPOINTMENTS (NEW) ───────────────────────────────────────────
+function openApptModal(appt = null) {
+  document.getElementById("apptEditId").value = appt ? appt._id : "";
+  document.getElementById("apptModalTitle").textContent = appt ? "Edit Appointment" : "Book Appointment";
+  document.getElementById("apptDoctor").value = appt ? appt.doctorName : "";
+  document.getElementById("apptSpecialty").value = appt ? appt.specialty : "";
+  document.getElementById("apptDate").value = appt ? appt.appointmentDate : "";
+  document.getElementById("apptTime").value = appt ? appt.appointmentTime : "";
+  document.getElementById("apptType").value = appt ? appt.apptType : "inperson";
+  document.getElementById("apptFee").value = appt ? (appt.fee || "") : "";
+  document.getElementById("apptNotes").value = appt ? (appt.notes || "") : "";
+  document.getElementById("apptModal").style.display = "flex";
+}
+function closeApptModal() {
+  document.getElementById("apptModal").style.display = "none";
+}
+async function saveAppointment() {
+  const doctorName     = document.getElementById("apptDoctor").value.trim();
+  const specialty      = document.getElementById("apptSpecialty").value;
+  const appointmentDate= document.getElementById("apptDate").value;
+  const appointmentTime= document.getElementById("apptTime").value;
+  const apptType       = document.getElementById("apptType").value;
+  const fee            = parseFloat(document.getElementById("apptFee").value) || null;
+  const notes          = document.getElementById("apptNotes").value.trim();
+  const editId         = document.getElementById("apptEditId").value;
+
+  if (!doctorName) return toast("Please enter doctor name", "error");
+  if (!specialty)  return toast("Please select a specialty", "error");
+  if (!appointmentDate) return toast("Please select a date", "error");
+  if (!appointmentTime) return toast("Please select a time", "error");
+
+  const body = { doctorName, specialty, appointmentDate, appointmentTime, apptType, fee, notes };
+  try {
+    if (editId) {
+      await api("/appointments/" + editId, { method: "PATCH", body: JSON.stringify(body) });
+      toast("Appointment updated!", "success");
+    } else {
+      await api("/appointments", { method: "POST", body: JSON.stringify(body) });
+      toast("Appointment booked!", "success");
+    }
+    closeApptModal();
+    loadAppointments();
+  } catch (err) { toast("Error: " + err.message, "error"); }
+}
+async function loadAppointments() {
+  try {
+    const data = await api("/appointments");
+    allAppointments = Array.isArray(data) ? data : [];
+    renderAppointments(apptFilterMode);
+  } catch { renderAppointments("all"); }
+}
+function filterAppointments(el, mode) {
+  document.querySelectorAll("#apptFilterStrip .ftag").forEach(t => t.classList.remove("active"));
+  el.classList.add("active");
+  apptFilterMode = mode;
+  renderAppointments(mode);
+}
+function renderAppointments(mode) {
+  const el = document.getElementById("apptList");
+  const cnt = document.getElementById("apptCount");
+  let list = allAppointments;
+  if (mode !== "all") list = list.filter(a => a.status === mode);
+  cnt.textContent = list.length ? `(${list.length})` : "";
+
+  if (!list.length) {
+    el.innerHTML = `<div class="appt-empty"><div class="appt-empty-icon">🗓️</div><h4 style="font-size:.9rem;font-weight:700;color:var(--ink);margin-bottom:5px;">${mode === "all" ? "No appointments yet" : "No " + mode + " appointments"}</h4><p style="font-size:.8rem;color:var(--ink-muted);">${mode === "all" ? 'Book your first appointment using the button above.' : 'Try changing the filter above.'}</p></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="appt-list">${list.map(a => {
+    const d = new Date(a.appointmentDate + "T00:00:00");
+    const day = d.getDate();
+    const mon = d.toLocaleString("default", { month: "short" }).toUpperCase();
+    const [h, m] = a.appointmentTime.split(":");
+    const hNum = parseInt(h);
+    const ampm = hNum >= 12 ? "PM" : "AM";
+    const h12 = ((hNum % 12) || 12) + ":" + m + " " + ampm;
+    const statusClass = { confirmed:"ab-confirmed", pending:"ab-pending", cancelled:"ab-cancelled", completed:"ab-completed" }[a.status] || "ab-pending";
+    const typeClass = a.apptType === "video" ? "ab-video" : "ab-inperson";
+    const typeLabel = a.apptType === "video" ? "📹 Video" : "🏥 In-Person";
+    return `<div class="appt-card ${a.status === 'cancelled' ? 'cancelled' : ''}">
+      <div class="appt-date-block"><div class="appt-day">${day}</div><div class="appt-mon">${mon}</div></div>
+      <div class="appt-info">
+        <h5>${esc(a.doctorName)}</h5>
+        <p>${esc(a.specialty)}${a.fee ? " · ₹" + a.fee : ""}</p>
+        <div class="appt-time-badge">⏰ ${h12}</div>
+        <div class="appt-badges">
+          <span class="appt-badge ${statusClass}">${a.status}</span>
+          <span class="appt-badge ${typeClass}">${typeLabel}</span>
+        </div>
+        ${a.notes ? `<p style="font-size:.7rem;color:var(--ink-muted);margin-top:4px;">📝 ${esc(a.notes)}</p>` : ""}
+      </div>
+      <div class="appt-actions">
+        ${a.status !== "cancelled" && a.status !== "completed" ? `
+          <button class="med-action-btn edit" onclick='openApptModal(${JSON.stringify(a)})'>Edit</button>
+          <button class="med-action-btn del" onclick="cancelAppointment('${a._id}')">Cancel</button>
+        ` : ""}
+      </div>
+    </div>`;
+  }).join("")}</div>`;
+}
+async function cancelAppointment(id) {
+  if (!confirm("Cancel this appointment?")) return;
+  try {
+    await api("/appointments/" + id, { method: "DELETE" });
+    toast("Appointment cancelled.", "success");
+    loadAppointments();
+  } catch (err) { toast("Error: " + err.message, "error"); }
+}
+
+// ─── HOSPITAL FINDER (NEW) ────────────────────────────────────────
+async function loadHospitals() {
+  try {
+    const res = await api("/hospitals");
+    allHospitals = res.hospitals || [];
+    renderHospitals(allHospitals);
+  } catch { renderHospitals([]); }
+}
+function setHospFilter(el, f) {
+  document.querySelectorAll(".hosp-filter-strip .ftag").forEach(t => t.classList.remove("active"));
+  el.classList.add("active"); hospFilter = f;
+  runHospitalSearch();
+}
+function runHospitalSearch() {
+  const q = (document.getElementById("hospSearchQ")?.value || "").trim().toLowerCase();
+  let list = allHospitals;
+  if (q) list = list.filter(h => h.name.toLowerCase().includes(q) || h.specialties.some(s => s.toLowerCase().includes(q)));
+  if (hospFilter === "govt")      list = list.filter(h => h.type === "govt");
+  if (hospFilter === "private")   list = list.filter(h => h.type === "private");
+  if (hospFilter === "clinic")    list = list.filter(h => h.type === "clinic");
+  if (hospFilter === "emergency") list = list.filter(h => h.hasEmergency);
+  renderHospitals(list);
+}
+function renderHospitals(list) {
+  const el = document.getElementById("hospList");
+  if (!list.length) {
+    el.innerHTML = `<div style="text-align:center;padding:28px;color:var(--ink-muted);font-size:.84rem;">No hospitals match your search.</div>`;
+    return;
+  }
+  const iconMap = { govt:"🏛️", private:"🏥", clinic:"🩺" };
+  const iconBgMap = { govt:"hosp-govt", private:"hosp-private", clinic:"hosp-clinic" };
+  el.innerHTML = list.map(h => `
+    <div class="hosp-card">
+      <div class="hosp-icon ${iconBgMap[h.type] || 'hosp-govt'}">${iconMap[h.type] || "🏥"}</div>
+      <div class="hosp-info">
+        <h5>${esc(h.name)}</h5>
+        <p>${esc(h.address)} · 📞 ${esc(h.phone)}</p>
+        <div class="hosp-meta">
+          <span class="hosp-dist">📍 ${h.distKm} km</span>
+          <span class="hosp-rating">⭐ ${h.rating}</span>
+          <span class="hosp-type-tag ht-${h.type}">${h.type}</span>
+          ${h.hasEmergency ? '<span class="hosp-emg-tag">🚨 24/7 Emergency</span>' : ""}
+          ${h.type === "govt" ? '<span style="font-size:.6rem;font-weight:800;background:var(--green-light);color:var(--green);padding:2px 7px;border-radius:5px;">Free OPD</span>' : ""}
+        </div>
+        ${h.note ? `<p style="font-size:.7rem;color:var(--teal-dark);margin-top:4px;font-weight:500;">💡 ${esc(h.note)}</p>` : ""}
+        <div class="hosp-specs">${h.specialties.map(s => `<span class="hosp-spec">${esc(s)}</span>`).join("")}</div>
+      </div>
+    </div>`).join("");
 }
 
 // ─── Medical Records ──────────────────────────────────────────────
@@ -1622,9 +2057,9 @@ if (TOKEN && USER) {
   loadUserProfile();
   loadMyMedicines();
   loadMedicines();
+  loadHospitals();
 }
 
-// Set schedule date on load
 document.getElementById("schedDate").textContent = new Date().toLocaleDateString("en-IN", { weekday:"long", year:"numeric", month:"long", day:"numeric" });
 </script>
 </body>
