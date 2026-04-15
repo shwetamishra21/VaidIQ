@@ -170,7 +170,7 @@ export function rebuildIndex() {
   store.built = false;
   store.chunks = [];
   store.vocabulary = {};
-  store.idf = [];
+  store.idf1 = [];
   store.build();
 }
 
