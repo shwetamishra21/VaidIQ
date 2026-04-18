@@ -7,7 +7,6 @@ VaidIQ is a full-stack, AI-augmented health management application tailored for 
 The name  *Vaid* (वैद्य) means a traditional healer or physician in Hindi and Sanskrit. VaidIQ aims to bring that accessible, trusted guidance into the modern era, with AI at its core.
 
 ---
-
 ## Why VaidIQ?
 
 Healthcare in India faces a stark accessibility gap. Millions of people in tier-2 and tier-3 cities have limited access to specialists, affordable medicines, and organised health records. VaidIQ is designed to bridge that gap by providing:
