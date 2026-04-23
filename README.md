@@ -4,7 +4,7 @@
 
 VaidIQ is a full-stack, AI-augmented health management application tailored for Indian users. It combines a Retrieval-Augmented Generation (RAG) medical knowledge engine, a Groq-powered LLM chat interface, and a complete personal health management suite — all in a single, offline-capable web app that runs on `localhost:4000`.
 
-The name  *Vaid* (वैद्य) means a traditional healer or physician in Hindi and Sanskrit. VaidIQ aims to bring that accessible, trusted guidance into the modern era, with AI at its core.
+The name  *Vaid* (वैद्य) means a traditional healer or physician in Hindi and Sanskrit. VaidIQ aims to bring that accessible, trusted guidance into the modern era, with AI at  its core.
 
 ---
 ## Why VaidIQ?
