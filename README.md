@@ -30,7 +30,7 @@ Users describe symptoms in free-form text — in Hindi or English — and receiv
 Every AI response is enriched with relevant chunks from a curated medical knowledge base stored as local JSON files. TF-IDF vectors and cosine similarity are used to retrieve the most relevant context at query time — no external embedding service required. The user's own profile (age, blood group, allergies, medications, recent readings) is also injected into the system prompt, making every answer personally contextualised.
 
 ### 3. Health Log & Vitals Tracking
-Users can log blood pressure, blood glucose (fasting / post-meal / random), body weight, temperature, and SpO₂. Entries are timestamped and displayed alongside a normal-range reference card. The log feeds back into the AI context so the assistant is aware of recent trends.
+Users can log blood pressure, blood glucose (fasting / post-meal / random),  body weight, temperature, and SpO₂. Entries are timestamped and displayed alongside a normal-range reference card. The log feeds back into the AI context so the assistant is aware of recent trends.
 
 ### 4. Medication Manager
 A full CRUD medication tracker with:
