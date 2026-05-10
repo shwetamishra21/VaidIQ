@@ -9,7 +9,7 @@ The name  *Vaid* (वैद्य) means a traditional healer or physician in Hi
 ---
 ## Why VaidIQ?
 
-Healthcare in India faces a stark accessibility gap. Millions of people in tier-2 and tier-3 cities have limited access to specialists, affordable medicines, and organised health records. VaidIQ is designed to bridge that gap by providing:
+Healthcare in  India faces a stark accessibility gap. Millions of people in tier-2 and tier-3 cities have limited access to specialists, affordable medicines, and organised health records. VaidIQ is designed to bridge that gap by providing:
 
 - Plain-language symptom guidance in Hindi or English
 - Affordable generic and Jan Aushadhi medicine alternatives
